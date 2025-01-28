@@ -7,6 +7,7 @@ function Menu() {
     setContentState((prev) => ({
       ...prev,
       type: (event.target as HTMLElement).id,
+      tool: "shape",
     }));
   };
 
@@ -17,7 +18,7 @@ function Menu() {
           <button className="cursor-pointer" id="rectangle">
             Reactangle
           </button>
-          <button className="cursor-pointer" id="cirle">
+          <button className="cursor-pointer" id="circle">
             Circle
           </button>
           <button className="cursor-pointer" id="triangle">

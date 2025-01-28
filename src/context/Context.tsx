@@ -1,15 +1,22 @@
-import React, { createContext, ReactNode, useContext, useState } from "react";
-
+import React, {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import { Canvas } from "fabric";
 interface CanvasContextProps {
   contentState: {
     tool: string;
-    canvas: HTMLCanvasElement | null;
+    canvas: Canvas | undefined;
     type: string;
   };
   setContentState: React.Dispatch<
     React.SetStateAction<{
       tool: string;
-      canvas: HTMLCanvasElement | null;
+      canvas: Canvas | undefined;
       type: string;
     }>
   >;
@@ -20,13 +27,22 @@ const CanvasContext = createContext<CanvasContextProps | undefined>(undefined);
 function ContextProvider({ children }: { children: ReactNode }) {
   const [contentState, setContentState] = useState<{
     tool: string;
-    canvas: HTMLCanvasElement | null;
+    canvas: Canvas | undefined;
     type: string;
   }>({
     tool: "shape",
-    canvas: null,
-    type: "",
+    canvas: undefined,
+    type: "f",
   });
+  const contentStateRef = useRef<{
+    tool: string;
+    canvas: Canvas | undefined;
+    type: string;
+  } | null>(null);
+
+  useEffect(() => {
+    contentStateRef.current = contentState;
+  }, [contentState]);
   return (
     <CanvasContext.Provider value={{ contentState, setContentState }}>
       {children}
