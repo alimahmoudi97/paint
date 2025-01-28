@@ -15,6 +15,7 @@ interface CanvasContextProps {
     colorShape: string;
     strokeWidth: number;
     strokeColor: string;
+    fillShape: boolean;
   };
   setContentState: React.Dispatch<
     React.SetStateAction<{
@@ -24,6 +25,7 @@ interface CanvasContextProps {
       colorShape: string;
       strokeWidth: number;
       strokeColor: string;
+      fillShape: boolean;
     }>
   >;
 }

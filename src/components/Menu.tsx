@@ -4,6 +4,7 @@ import { useContextCanvas } from "../context/Context";
 function Menu() {
   const { setContentState } = useContextCanvas();
   const [selectedColor, setSelectedColor] = useState("red");
+  const [isFillShape, setFillShape] = useState<boolean>(true);
 
   const handleShapeBtn = (event: React.MouseEvent<HTMLDivElement>) => {
     setContentState((prev) => ({
@@ -12,6 +13,8 @@ function Menu() {
       tool: "shape",
       colorShape: selectedColor,
       strokeWidth: 1,
+      fillShape: isFillShape,
+      strokeColor: selectedColor,
     }));
   };
 
@@ -19,6 +22,9 @@ function Menu() {
     setSelectedColor(color);
   };
 
+  const handleFillShapeChange = () => {
+    setFillShape(!isFillShape);
+  };
   return (
     <div className="h-screen bg-gray-800 text-white flex flex-col items-center p-4 shadow-lg">
       <h2 className="text-2xl mb-6">Shapes</h2>
@@ -55,6 +61,11 @@ function Menu() {
           />
         ))}
       </div>
+      <input
+        type="checkbox"
+        checked={isFillShape}
+        onChange={handleFillShapeChange}
+      />
     </div>
   );
 }

@@ -9,6 +9,7 @@ interface ShapeProps {
     colorShape: string;
     strokeWidth: number;
     strokeColor: string;
+    fillShape: boolean;
   };
   setContentState: React.Dispatch<
     React.SetStateAction<{
@@ -18,6 +19,7 @@ interface ShapeProps {
       colorShape: string;
       strokeWidth: number;
       strokeColor: string;
+      fillShape: boolean;
     }>
   >;
 }
@@ -41,7 +43,9 @@ export const Shape = ({
           top: y,
           originX: "left",
           originY: "top",
-          fill: contentState.colorShape,
+          fill: contentState.fillShape
+            ? contentState.colorShape
+            : "transparent",
           stroke: contentState.strokeColor,
           strokeWidth: contentState.strokeWidth,
           width: 0,
@@ -54,7 +58,9 @@ export const Shape = ({
           top: y,
           originX: "left",
           originY: "top",
-          fill: contentState.colorShape,
+          fill: contentState.fillShape
+            ? contentState.colorShape
+            : "transparent",
           stroke: contentState.strokeColor,
           strokeWidth: contentState.strokeWidth,
           radius: 0,
@@ -66,7 +72,9 @@ export const Shape = ({
           top: y,
           originX: "left",
           originY: "top",
-          fill: contentState.colorShape,
+          fill: contentState.fillShape
+            ? contentState.colorShape
+            : "transparent",
           stroke: contentState.strokeColor,
           strokeWidth: contentState.strokeWidth,
           width: 0,
