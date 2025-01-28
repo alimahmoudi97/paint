@@ -1,10 +1,12 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useContextCanvas } from "../context/Context";
 
 function Menu() {
   const { setContentState } = useContextCanvas();
+  const [selectedShape, setSelectedShape] = useState("");
   const [selectedColor, setSelectedColor] = useState("red");
   const [isFillShape, setFillShape] = useState<boolean>(true);
+  const [strokeWidth, setStrokeWidth] = useState<number>(1);
 
   const handleShapeBtn = (event: React.MouseEvent<HTMLDivElement>) => {
     setContentState((prev) => ({
@@ -12,37 +14,55 @@ function Menu() {
       type: (event.target as HTMLElement).id,
       tool: "shape",
       colorShape: selectedColor,
-      strokeWidth: 1,
+      strokeWidth,
       fillShape: isFillShape,
       strokeColor: selectedColor,
     }));
+    setSelectedShape((event.target as HTMLElement).id);
   };
 
   const handleColorChange = (color: string) => {
     setSelectedColor(color);
+    setContentState((prev) => ({
+      ...prev,
+      colorShape: color,
+      strokeColor: color,
+    }));
   };
 
   const handleFillShapeChange = () => {
     setFillShape(!isFillShape);
+  };
+
+  const handleStrokeWidthChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setStrokeWidth(Number(event.target.value));
   };
   return (
     <div className="h-screen bg-gray-800 text-white flex flex-col items-center p-4 shadow-lg">
       <h2 className="text-2xl mb-6">Shapes</h2>
       <div className="flex flex-col gap-4 w-full" onClick={handleShapeBtn}>
         <button
-          className="bg-gray-700 hover:bg-green-500 text-white py-2 px-4 rounded"
+          className={`py-2 px-4 rounded cursor-pointer ${
+            selectedShape === "rectangle" ? "bg-green-500" : "bg-gray-700"
+          } hover:bg-green-500 text-white`}
           id="rectangle"
         >
           Rectangle
         </button>
         <button
-          className="bg-gray-700 hover:bg-green-500 text-white py-2 px-4 rounded"
+          className={`py-2 px-4 rounded cursor-pointer ${
+            selectedShape === "circle" ? "bg-green-500" : "bg-gray-700"
+          } hover:bg-green-500 text-white`}
           id="circle"
         >
           Circle
         </button>
         <button
-          className="bg-gray-700 hover:bg-green-500 text-white py-2 px-4 rounded"
+          className={`py-2 px-4 rounded cursor-pointer ${
+            selectedShape === "triangle" ? "bg-green-500" : "bg-gray-700"
+          } hover:bg-green-500 text-white`}
           id="triangle"
         >
           Triangle
@@ -61,11 +81,22 @@ function Menu() {
           />
         ))}
       </div>
+      <h2 className="text-base mt-6 mb-4">Change fill shape</h2>
       <input
         type="checkbox"
         checked={isFillShape}
         onChange={handleFillShapeChange}
       />
+      <h2 className="text-xl mt-6 mb-4">Stroke Width</h2>
+      <input
+        type="range"
+        min="1"
+        max="10"
+        value={strokeWidth}
+        onChange={handleStrokeWidthChange}
+        className="w-full"
+      />
+      <span>{strokeWidth}</span>
     </div>
   );
 }

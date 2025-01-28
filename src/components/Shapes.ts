@@ -47,7 +47,7 @@ export const Shape = ({
             ? contentState.colorShape
             : "transparent",
           stroke: contentState.strokeColor,
-          strokeWidth: contentState.strokeWidth,
+          strokeWidth: contentState.strokeWidth * 4,
           width: 0,
           height: 0,
         });
@@ -62,7 +62,7 @@ export const Shape = ({
             ? contentState.colorShape
             : "transparent",
           stroke: contentState.strokeColor,
-          strokeWidth: contentState.strokeWidth,
+          strokeWidth: contentState.strokeWidth * 4,
           radius: 0,
         });
         break;
@@ -76,7 +76,7 @@ export const Shape = ({
             ? contentState.colorShape
             : "transparent",
           stroke: contentState.strokeColor,
-          strokeWidth: contentState.strokeWidth,
+          strokeWidth: contentState.strokeWidth * 4,
           width: 0,
           height: 0,
         });
