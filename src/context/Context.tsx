@@ -12,12 +12,18 @@ interface CanvasContextProps {
     tool: string;
     canvas: Canvas | undefined;
     type: string;
+    colorShape: string;
+    strokeWidth: number;
+    strokeColor: string;
   };
   setContentState: React.Dispatch<
     React.SetStateAction<{
       tool: string;
       canvas: Canvas | undefined;
       type: string;
+      colorShape: string;
+      strokeWidth: number;
+      strokeColor: string;
     }>
   >;
 }
@@ -29,15 +35,24 @@ function ContextProvider({ children }: { children: ReactNode }) {
     tool: string;
     canvas: Canvas | undefined;
     type: string;
+    colorShape: string;
+    strokeWidth: number;
+    strokeColor: string;
   }>({
     tool: "shape",
     canvas: undefined,
     type: "f",
+    colorShape: "#000",
+    strokeWidth: 2,
+    strokeColor: "#000",
   });
   const contentStateRef = useRef<{
     tool: string;
     canvas: Canvas | undefined;
     type: string;
+    colorShape: string;
+    strokeWidth: number;
+    strokeColor: string;
   } | null>(null);
 
   useEffect(() => {
