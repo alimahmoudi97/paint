@@ -1,7 +1,9 @@
 import { Canvas } from "fabric";
 import { useEffect, useRef } from "react";
+import { useContextCanvas } from "../context/Context";
 
 function CanvasWrapper() {
+  const { contentState } = useContextCanvas();
   const canvasRef = useRef(null);
   const fabricRef = useRef<Canvas | null>(null);
 
@@ -18,6 +20,10 @@ function CanvasWrapper() {
       canvas.dispose();
     };
   }, []);
+
+  useEffect(() => {
+    console.log(contentState);
+  }, [contentState]);
 
   return (
     <div>
