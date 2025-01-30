@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useContextCanvas } from "../context/Context";
 
 function Menu() {
-  const { setContentState } = useContextCanvas();
+  const { contentState, setContentState } = useContextCanvas();
   const [selectedShape, setSelectedShape] = useState("");
   const [selectedColor, setSelectedColor] = useState("red");
   const [isFillShape, setFillShape] = useState<boolean>(true);
@@ -39,6 +39,41 @@ function Menu() {
   ) => {
     setStrokeWidth(Number(event.target.value));
   };
+
+  const handlePenBtn = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
+    setContentState((prev) => ({
+      ...prev,
+      tool: "pen",
+    }));
+    console.log("Ali");
+  };
+
+  useEffect(() => {
+    const canvas = contentState.canvas;
+
+    const handleObjectSelected = () => {
+      if (contentState.tool === "pen") return;
+      const activeObject = canvas?.getActiveObject();
+      if (activeObject) {
+        activeObject.set({
+          fill: isFillShape ? selectedColor : "transparent",
+          stroke: selectedColor,
+          strokeWidth,
+        });
+
+        canvas?.renderAll();
+      }
+    };
+
+    canvas?.on("selection:created", handleObjectSelected);
+    canvas?.on("selection:updated", handleObjectSelected);
+
+    return () => {
+      canvas?.off("selection:created", handleObjectSelected);
+      // canvas?.off("selection:updated", handleObjectSelected);
+    };
+  }, [contentState]);
   return (
     <div className="h-screen bg-gray-800 text-white flex flex-col items-center p-4 shadow-lg">
       <h2 className="text-2xl mb-6">Shapes</h2>
@@ -68,6 +103,15 @@ function Menu() {
           Triangle
         </button>
       </div>
+      <button
+        className={`py-2 px-4 rounded cursor-pointer ${
+          selectedShape === "pen" ? "bg-green-500" : "bg-gray-700"
+        } hover:bg-green-500 text-white`}
+        onClick={handlePenBtn}
+        id="pen"
+      >
+        Pen
+      </button>
       <h2 className="text-2xl mt-6 mb-4">Colors</h2>
       <div className="flex flex-col justify-center gap-2">
         {["red", "green", "blue", "yellow", "purple"].map((color) => (

@@ -2,6 +2,7 @@ import { Canvas } from "fabric";
 import { useEffect, useRef } from "react";
 import { useContextCanvas } from "../context/Context";
 import { Shape } from "./Shapes";
+import PenTool from "./PenTool";
 
 function CanvasWrapper() {
   const { contentState, setContentState } = useContextCanvas();
@@ -14,8 +15,8 @@ function CanvasWrapper() {
     const canvas = new Canvas(canvasRef.current, { perPixelTargetFind: true });
     fabricRef.current = canvas;
 
-    canvas.setWidth(Math.floor(window.document.body.offsetWidth));
-    canvas.setHeight(Math.floor(window.innerHeight / 2));
+    canvas.setWidth(Math.floor(window.document.body.offsetWidth * 0.9));
+    canvas.setHeight(Math.floor(window.innerHeight * 0.9));
 
     setContentState((prev) => ({ ...prev, canvas: canvas }));
 
@@ -38,7 +39,18 @@ function CanvasWrapper() {
   }, [contentState]);
 
   useEffect(() => {
-    console.log(contentState);
+    if (fabricRef.current && contentState.tool == "pen") {
+      PenTool({ canvas: fabricRef.current, contentState, setContentState });
+      console.log(contentState.tool);
+    }
+  }, [contentState.tool]);
+
+  useEffect(() => {
+    if (!canvasRef.current) return;
+    console.log(
+      "contentState canvas",
+      fabricRef.current === contentState.canvas
+    );
   }, [contentState]);
 
   return (

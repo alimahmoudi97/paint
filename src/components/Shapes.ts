@@ -35,7 +35,8 @@ export const Shape = ({
   let isDrawing = false;
 
   const addShape = ({ x, y }: { x: number; y: number }) => {
-    if (contentState.tool === "selected") return;
+    if (contentState.tool === "selected" || contentState.tool === "pen") return;
+    canvas.isDrawingMode = false;
     switch (contentState.type) {
       case "rectangle":
         shape = new Rect({
@@ -122,6 +123,8 @@ export const Shape = ({
   };
   const onMouseUp = (event) => {
     isDrawing = false;
+    canvas.isDrawingMode = false;
+
     setContentState((prev) => ({ ...prev, tool: "selected" }));
   };
 
