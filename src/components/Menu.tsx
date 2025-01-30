@@ -49,6 +49,20 @@ function Menu() {
     console.log("Ali");
   };
 
+  const handleExport = () => {
+    if (contentState.canvas) {
+      const dataURL = contentState.canvas.toDataURL({
+        format: "png",
+        quality: 1.0,
+        multiplier: 1,
+      });
+      const link = document.createElement("a");
+      link.href = dataURL;
+      link.download = "canvas.png";
+      link.click();
+    }
+  };
+
   useEffect(() => {
     const canvas = contentState.canvas;
 
@@ -141,6 +155,12 @@ function Menu() {
         className="w-full"
       />
       <span>{strokeWidth}</span>
+      <button
+        className="py-2 px-4 mt-6 rounded cursor-pointer bg-blue-500 hover:bg-blue-700 text-white"
+        onClick={handleExport}
+      >
+        Export as Image
+      </button>
     </div>
   );
 }
