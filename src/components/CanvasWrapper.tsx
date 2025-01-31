@@ -13,6 +13,7 @@ function CanvasWrapper() {
 
   useEffect(() => {
     if (!canvasRef.current) return;
+    // if (fabricRef.current) return;
 
     const canvas = new Canvas(canvasRef.current, { perPixelTargetFind: true });
     fabricRef.current = canvas;

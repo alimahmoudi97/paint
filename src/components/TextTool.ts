@@ -25,7 +25,17 @@ export const TextTool = ({
     canvas.add(text);
     canvas.setActiveObject(text);
     text.enterEditing();
-    canvas.renderAll();
+    text.selectAll();
+
+    setContentState({ ...contentState, tool: "select" });
+
+    canvas.on("mouse:down", () => {
+      if (canvas.getActiveObject() !== text) {
+        if (text.text === "") {
+          canvas.remove(text);
+        }
+      }
+    });
   };
 
   //   const onMouseMove = (e) => {
@@ -37,6 +47,7 @@ export const TextTool = ({
   //   };
 
   canvas.on("mouse:down", onMouseDown);
+
   //   canvas.on("mouse:move", onMouseMove);
   //   canvas.on("mouse:up", onMouseUp);
 
