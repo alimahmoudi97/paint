@@ -1,5 +1,14 @@
 import { useEffect, useState } from "react";
 import { useContextCanvas } from "../context/Context";
+import {
+  FaCircle,
+  FaDrawPolygon,
+  FaEraser,
+  FaPen,
+  FaSquare,
+  FaTextHeight,
+} from "react-icons/fa";
+import { FiTriangle } from "react-icons/fi";
 
 function Menu() {
   const { contentState, setContentState } = useContextCanvas();
@@ -99,14 +108,14 @@ function Menu() {
   return (
     <div className="h-screen bg-gray-800 text-white flex flex-col items-center p-4 shadow-lg">
       <h2 className="text-2xl mb-6">Shapes</h2>
-      <div className="flex flex-col gap-4 w-full" onClick={handleShapeBtn}>
+      <div className="flex flex-wrap gap-4 w-full" onClick={handleShapeBtn}>
         <button
           className={`py-2 px-4 rounded cursor-pointer ${
             selectedShape === "rectangle" ? "bg-green-500" : "bg-gray-700"
           } hover:bg-green-500 text-white`}
           id="rectangle"
         >
-          Rectangle
+          <FaSquare />
         </button>
         <button
           className={`py-2 px-4 rounded cursor-pointer ${
@@ -114,7 +123,7 @@ function Menu() {
           } hover:bg-green-500 text-white`}
           id="circle"
         >
-          Circle
+          <FaCircle />
         </button>
         <button
           className={`py-2 px-4 rounded cursor-pointer ${
@@ -122,42 +131,46 @@ function Menu() {
           } hover:bg-green-500 text-white`}
           id="triangle"
         >
-          Triangle
+          <FiTriangle />
         </button>
       </div>
-      <button
-        className={`py-2 w-full mt-4 rounded cursor-pointer ${
-          contentState.tool === "pen" ? "bg-green-500" : "bg-gray-700"
-        } hover:bg-green-500 text-white`}
-        onClick={handlePenBtn}
-        id="pen"
-      >
-        Pen
-      </button>
-      <button
-        className={`py-2 w-full rounded cursor-pointer ${
-          contentState.tool === "eraser" ? "bg-green-500" : "bg-gray-700"
-        } hover:bg-green-500 text-white mt-4`}
-        onClick={handleEraserBtn}
-        id="eraser"
-      >
-        Eraser
-      </button>
-      <button
-        className={`py-2 w-full rounded cursor-pointer ${
-          contentState.tool === "eraser" ? "bg-green-500" : "bg-gray-700"
-        } hover:bg-green-500 text-white mt-4`}
-        onClick={handleTextBtn}
-        id="eraser"
-      >
-        Text
-      </button>
+      <h2 className="text-2xl my-2">Tools</h2>
+
+      <div className="flex flex-wrap gap-4 w-full">
+        <button
+          className={`py-2 px-4 rounded cursor-pointer ${
+            contentState.tool === "pen" ? "bg-green-500" : "bg-gray-700"
+          } hover:bg-green-500 text-white`}
+          onClick={handlePenBtn}
+          id="pen"
+        >
+          <FaPen />
+        </button>
+        <button
+          className={`py-2 px-4 rounded cursor-pointer ${
+            contentState.tool === "eraser" ? "bg-green-500" : "bg-gray-700"
+          } hover:bg-green-500 text-white`}
+          onClick={handleEraserBtn}
+          id="eraser"
+        >
+          <FaEraser />
+        </button>
+        <button
+          className={`py-2 px-4 rounded cursor-pointer ${
+            contentState.tool === "text" ? "bg-green-500" : "bg-gray-700"
+          } hover:bg-green-500 text-white`}
+          onClick={handleTextBtn}
+          id="eraser"
+        >
+          <FaTextHeight />
+        </button>
+      </div>
       <h2 className="text-2xl mt-6 mb-4">Colors</h2>
       <div className="flex flex-wrap justify-center gap-2">
         {["red", "green", "blue", "yellow", "purple"].map((color) => (
           <button
             key={color}
-            className={`w-8 h-8 rounded-full cursor-pointer ${
+            className={`w-6 h-6 rounded-full cursor-pointer ${
               selectedColor === color ? "ring-2 ring-white" : ""
             }`}
             style={{ backgroundColor: color }}
@@ -182,7 +195,7 @@ function Menu() {
       />
       <span>{strokeWidth}</span>
       <button
-        className="py-2 px-4 mt-6 rounded cursor-pointer bg-blue-500 hover:bg-blue-700 text-white"
+        className="text-base py-2 px-1 mt-6 rounded cursor-pointer bg-blue-500 hover:bg-blue-700 text-white"
         onClick={handleExport}
       >
         Export as Image
