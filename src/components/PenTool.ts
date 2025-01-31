@@ -1,30 +1,7 @@
-import { Canvas, PencilBrush } from "fabric";
+import { PencilBrush } from "fabric";
+import { BaseProps } from "../types/types";
 
-interface PenTollProps {
-  canvas: Canvas;
-  contentState: {
-    tool: string;
-    canvas: Canvas | undefined;
-    type: string;
-    colorShape: string;
-    strokeWidth: number;
-    strokeColor: string;
-    fillShape: boolean;
-  };
-  setContentState: React.Dispatch<
-    React.SetStateAction<{
-      tool: string;
-      canvas: Canvas | undefined;
-      type: string;
-      colorShape: string;
-      strokeWidth: number;
-      strokeColor: string;
-      fillShape: boolean;
-    }>
-  >;
-}
-
-function PenTool({ canvas, contentState, setContentState }: PenTollProps) {
+function PenTool({ canvas, contentState, setContentState }: BaseProps) {
   console.log("canvas:", canvas);
   canvas.freeDrawingBrush = new PencilBrush(canvas);
   if (canvas.freeDrawingBrush) {

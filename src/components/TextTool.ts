@@ -1,34 +1,11 @@
-import { Canvas, IText } from "fabric";
-
-interface ShapeProps {
-  canvas: Canvas;
-  contentState: {
-    tool: string;
-    canvas: Canvas | undefined;
-    type: string;
-    colorShape: string;
-    strokeWidth: number;
-    strokeColor: string;
-    fillShape: boolean;
-  };
-  setContentState: React.Dispatch<
-    React.SetStateAction<{
-      tool: string;
-      canvas: Canvas | undefined;
-      type: string;
-      colorShape: string;
-      strokeWidth: number;
-      strokeColor: string;
-      fillShape: boolean;
-    }>
-  >;
-}
+import { IText } from "fabric";
+import { BaseProps } from "../types/types";
 
 export const TextTool = ({
   canvas,
   contentState,
   setContentState,
-}: ShapeProps) => {
+}: BaseProps) => {
   let isDown = false;
 
   const onMouseDown = (e) => {

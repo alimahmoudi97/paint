@@ -1,34 +1,11 @@
-import { Canvas, Object, Group } from "fabric";
-
-interface ShapeProps {
-  canvas: Canvas;
-  contentState: {
-    tool: string;
-    canvas: Canvas | undefined;
-    type: string;
-    colorShape: string;
-    strokeWidth: number;
-    strokeColor: string;
-    fillShape: boolean;
-  };
-  setContentState: React.Dispatch<
-    React.SetStateAction<{
-      tool: string;
-      canvas: Canvas | undefined;
-      type: string;
-      colorShape: string;
-      strokeWidth: number;
-      strokeColor: string;
-      fillShape: boolean;
-    }>
-  >;
-}
+import { Object, Group } from "fabric";
+import { BaseProps } from "../types/types";
 
 export const EraserTool = ({
   canvas,
   contentState,
   setContentState,
-}: ShapeProps) => {
+}: BaseProps) => {
   let isDown = false;
   let objectToRemove: Object[] = [];
 

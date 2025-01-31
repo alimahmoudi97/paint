@@ -1,34 +1,7 @@
 import { Canvas, Circle, Rect, Triangle } from "fabric";
+import { BaseProps } from "../types/types";
 
-interface ShapeProps {
-  canvas: Canvas;
-  contentState: {
-    tool: string;
-    canvas: Canvas | undefined;
-    type: string;
-    colorShape: string;
-    strokeWidth: number;
-    strokeColor: string;
-    fillShape: boolean;
-  };
-  setContentState: React.Dispatch<
-    React.SetStateAction<{
-      tool: string;
-      canvas: Canvas | undefined;
-      type: string;
-      colorShape: string;
-      strokeWidth: number;
-      strokeColor: string;
-      fillShape: boolean;
-    }>
-  >;
-}
-
-export const Shape = ({
-  canvas,
-  contentState,
-  setContentState,
-}: ShapeProps) => {
+export const Shape = ({ canvas, contentState, setContentState }: BaseProps) => {
   let shape: Rect | Circle | Triangle;
   let originX: number;
   let originY: number;

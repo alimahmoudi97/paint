@@ -6,56 +6,21 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { Canvas } from "fabric";
-interface CanvasContextProps {
-  contentState: {
-    tool: string;
-    canvas: Canvas | undefined;
-    type: string;
-    colorShape: string;
-    strokeWidth: number;
-    strokeColor: string;
-    fillShape: boolean;
-  };
-  setContentState: React.Dispatch<
-    React.SetStateAction<{
-      tool: string;
-      canvas: Canvas | undefined;
-      type: string;
-      colorShape: string;
-      strokeWidth: number;
-      strokeColor: string;
-      fillShape: boolean;
-    }>
-  >;
-}
+import { CanvasContextProps, ContentState } from "../types/types";
 
 const CanvasContext = createContext<CanvasContextProps | undefined>(undefined);
 
 function ContextProvider({ children }: { children: ReactNode }) {
-  const [contentState, setContentState] = useState<{
-    tool: string;
-    canvas: Canvas | undefined;
-    type: string;
-    colorShape: string;
-    strokeWidth: number;
-    strokeColor: string;
-  }>({
+  const [contentState, setContentState] = useState<ContentState>({
     tool: "shape",
     canvas: undefined,
     type: "f",
     colorShape: "#000",
     strokeWidth: 2,
     strokeColor: "#000",
+    fillShape: true,
   });
-  const contentStateRef = useRef<{
-    tool: string;
-    canvas: Canvas | undefined;
-    type: string;
-    colorShape: string;
-    strokeWidth: number;
-    strokeColor: string;
-  } | null>(null);
+  const contentStateRef = useRef<ContentState | null>(null);
 
   useEffect(() => {
     contentStateRef.current = contentState;
