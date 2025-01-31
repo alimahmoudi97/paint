@@ -63,11 +63,19 @@ function Menu() {
     }
   };
 
+  const handleEraserBtn = () => {
+    setContentState((prev) => ({ ...prev, tool: "eraser" }));
+  };
+
+  const handleTextBtn = () => {
+    setContentState((prev) => ({ ...prev, tool: "text" }));
+  };
+
   useEffect(() => {
     const canvas = contentState.canvas;
 
     const handleObjectSelected = () => {
-      if (contentState.tool === "pen") return;
+      if (contentState.tool === "eraser") return;
       const activeObject = canvas?.getActiveObject();
       if (activeObject) {
         activeObject.set({
@@ -118,16 +126,34 @@ function Menu() {
         </button>
       </div>
       <button
-        className={`py-2 px-4 rounded cursor-pointer ${
-          selectedShape === "pen" ? "bg-green-500" : "bg-gray-700"
+        className={`py-2 w-full mt-4 rounded cursor-pointer ${
+          contentState.tool === "pen" ? "bg-green-500" : "bg-gray-700"
         } hover:bg-green-500 text-white`}
         onClick={handlePenBtn}
         id="pen"
       >
         Pen
       </button>
+      <button
+        className={`py-2 w-full rounded cursor-pointer ${
+          contentState.tool === "eraser" ? "bg-green-500" : "bg-gray-700"
+        } hover:bg-green-500 text-white mt-4`}
+        onClick={handleEraserBtn}
+        id="eraser"
+      >
+        Eraser
+      </button>
+      <button
+        className={`py-2 w-full rounded cursor-pointer ${
+          contentState.tool === "eraser" ? "bg-green-500" : "bg-gray-700"
+        } hover:bg-green-500 text-white mt-4`}
+        onClick={handleTextBtn}
+        id="eraser"
+      >
+        Text
+      </button>
       <h2 className="text-2xl mt-6 mb-4">Colors</h2>
-      <div className="flex flex-col justify-center gap-2">
+      <div className="flex flex-wrap justify-center gap-2">
         {["red", "green", "blue", "yellow", "purple"].map((color) => (
           <button
             key={color}

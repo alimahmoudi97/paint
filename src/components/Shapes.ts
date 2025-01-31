@@ -91,11 +91,13 @@ export const Shape = ({
   };
 
   const onMouseDown = (event) => {
+    if (contentState.tool !== "shape") return;
     originX = event.pointer.x;
     originY = event.pointer.y;
     addShape({ x: originX, y: originY });
   };
   const onMouseMove = (event) => {
+    if (contentState.tool !== "shape") return;
     if (!isDrawing) return;
     const currentX = event.pointer.x;
     const currentY = event.pointer.y;
@@ -122,6 +124,7 @@ export const Shape = ({
     canvas.renderAll();
   };
   const onMouseUp = (event) => {
+    if (contentState.tool !== "shape") return;
     isDrawing = false;
     canvas.isDrawingMode = false;
 

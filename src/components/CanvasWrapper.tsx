@@ -3,6 +3,8 @@ import { useEffect, useRef } from "react";
 import { useContextCanvas } from "../context/Context";
 import { Shape } from "./Shapes";
 import PenTool from "./PenTool";
+import { EraserTool } from "./EraserTool";
+import { TextTool } from "./TextTool";
 
 function CanvasWrapper() {
   const { contentState, setContentState } = useContextCanvas();
@@ -33,8 +35,22 @@ function CanvasWrapper() {
       setContentState,
     });
 
+    const eraserEventListener = EraserTool({
+      canvas: fabricRef.current,
+      contentState,
+      setContentState,
+    });
+
+    const textEventListener = TextTool({
+      canvas: fabricRef.current,
+      contentState,
+      setContentState,
+    });
+
     return () => {
       shapeEventListener.removeEventListener();
+      eraserEventListener.removeEventListener();
+      textEventListener.textEventListener();
     };
   }, [contentState]);
 
@@ -47,10 +63,7 @@ function CanvasWrapper() {
 
   useEffect(() => {
     if (!canvasRef.current) return;
-    console.log(
-      "contentState canvas",
-      fabricRef.current === contentState.canvas
-    );
+    console.log(contentState.tool);
   }, [contentState]);
 
   return (
