@@ -12,9 +12,9 @@ const CanvasContext = createContext<CanvasContextProps | undefined>(undefined);
 
 function ContextProvider({ children }: { children: ReactNode }) {
   const [contentState, setContentState] = useState<ContentState>({
-    tool: "shape",
+    tool: "",
     canvas: undefined,
-    type: "f",
+    type: "",
     colorShape: "#000",
     strokeWidth: 2,
     strokeColor: "#000",

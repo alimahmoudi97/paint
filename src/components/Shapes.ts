@@ -10,6 +10,7 @@ export const Shape = ({ canvas, contentState, setContentState }: BaseProps) => {
   const addShape = ({ x, y }: { x: number; y: number }) => {
     if (contentState.tool === "selected" || contentState.tool === "pen") return;
     canvas.isDrawingMode = false;
+    if (canvas.getActiveObject()) return;
     switch (contentState.type) {
       case "rectangle":
         shape = new Rect({
@@ -59,7 +60,7 @@ export const Shape = ({ canvas, contentState, setContentState }: BaseProps) => {
         return;
     }
     canvas.add(shape);
-    setContentState((prev) => ({ ...prev, tool: "selected" }));
+    setContentState((prev) => ({ ...prev, tool: "shape" }));
     isDrawing = true;
   };
 
@@ -101,7 +102,7 @@ export const Shape = ({ canvas, contentState, setContentState }: BaseProps) => {
     isDrawing = false;
     canvas.isDrawingMode = false;
 
-    setContentState((prev) => ({ ...prev, tool: "selected" }));
+    setContentState((prev) => ({ ...prev, tool: "shape" }));
   };
 
   canvas.on("mouse:down", onMouseDown);
