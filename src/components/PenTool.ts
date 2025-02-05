@@ -1,7 +1,7 @@
 import { PencilBrush } from "fabric";
 import { BaseProps } from "../types/types";
 
-function PenTool({ canvas, contentState, setContentState }: BaseProps) {
+function PenTool({ canvas }: BaseProps) {
   console.log("canvas:", canvas);
   canvas.freeDrawingBrush = new PencilBrush(canvas);
   if (canvas.freeDrawingBrush) {

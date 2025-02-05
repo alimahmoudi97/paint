@@ -1,4 +1,4 @@
-import { Canvas, Circle, Rect, Triangle } from "fabric";
+import { Circle, Rect, TPointerEventInfo, Triangle } from "fabric";
 import { BaseProps } from "../types/types";
 
 export const Shape = ({ canvas, contentState, setContentState }: BaseProps) => {
@@ -63,13 +63,13 @@ export const Shape = ({ canvas, contentState, setContentState }: BaseProps) => {
     isDrawing = true;
   };
 
-  const onMouseDown = (event) => {
+  const onMouseDown = (event: TPointerEventInfo) => {
     if (contentState.tool !== "shape") return;
     originX = event.pointer.x;
     originY = event.pointer.y;
     addShape({ x: originX, y: originY });
   };
-  const onMouseMove = (event) => {
+  const onMouseMove = (event: TPointerEventInfo) => {
     if (contentState.tool !== "shape") return;
     if (!isDrawing) return;
     const currentX = event.pointer.x;
@@ -96,7 +96,7 @@ export const Shape = ({ canvas, contentState, setContentState }: BaseProps) => {
     }
     canvas.renderAll();
   };
-  const onMouseUp = (event) => {
+  const onMouseUp = () => {
     if (contentState.tool !== "shape") return;
     isDrawing = false;
     canvas.isDrawingMode = false;

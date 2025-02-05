@@ -1,11 +1,7 @@
-import { Object, Group } from "fabric";
+import { Object, Group, TPointerEventInfo } from "fabric";
 import { BaseProps } from "../types/types";
 
-export const EraserTool = ({
-  canvas,
-  contentState,
-  setContentState,
-}: BaseProps) => {
+export const EraserTool = ({ canvas, contentState }: BaseProps) => {
   let isDown = false;
   let objectToRemove: Object[] = [];
 
@@ -17,7 +13,7 @@ export const EraserTool = ({
     canvas.renderAll();
   }
 
-  const onMouseDown = (e) => {
+  const onMouseDown = (e: TPointerEventInfo) => {
     console.log("onMouseDown:", contentState.tool);
     if (contentState.tool !== "eraser") return;
     objectToRemove = [];
@@ -37,7 +33,7 @@ export const EraserTool = ({
     canvas.renderAll();
   };
 
-  const onMouseMove = (e) => {
+  const onMouseMove = (e: TPointerEventInfo) => {
     if (contentState.tool !== "eraser") return;
 
     canvas.forEachObject((object) => {
@@ -52,7 +48,7 @@ export const EraserTool = ({
     canvas.renderAll();
   };
 
-  const onMouseUp = (e) => {
+  const onMouseUp = (e: TPointerEventInfo) => {
     if (contentState.tool !== "eraser") return;
 
     objectToRemove.forEach((object) => {
@@ -66,7 +62,9 @@ export const EraserTool = ({
       }
     });
 
-    canvas.remove(e.target);
+    if (e.target) {
+      canvas.remove(e.target);
+    }
 
     objectToRemove = [];
     isDown = false;

@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useContextCanvas } from "../context/Context";
 import {
   FaCircle,
-  FaDrawPolygon,
   FaEraser,
   FaPen,
   FaSquare,

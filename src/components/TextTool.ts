@@ -1,4 +1,4 @@
-import { IText } from "fabric";
+import { IText, TPointerEventInfo } from "fabric";
 import { BaseProps } from "../types/types";
 
 export const TextTool = ({
@@ -6,10 +6,8 @@ export const TextTool = ({
   contentState,
   setContentState,
 }: BaseProps) => {
-  let isDown = false;
-
-  const onMouseDown = (e) => {
-    console.log(contentState.tool);
+  const onMouseDown = (e: TPointerEventInfo) => {
+    console.log(e);
     if (contentState.tool !== "text") return;
 
     const text = new IText("", {
