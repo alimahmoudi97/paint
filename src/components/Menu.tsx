@@ -29,7 +29,19 @@ function Menu() {
       strokeColor: selectedColor,
     }));
     setSelectedShape(type);
-    console.log("Selected Shape:", selectedShape);
+  };
+
+  const handleDrawBtn = (type: string) => {
+    setContentState((prev) => ({
+      ...prev,
+      type,
+      tool: "tools",
+      colorShape: selectedColor,
+      strokeWidth,
+      fillShape: isFillShape,
+      strokeColor: selectedColor,
+    }));
+    setSelectedShape(type);
   };
 
   const handleColorChange = (color: string) => {
@@ -52,11 +64,14 @@ function Menu() {
     setStrokeWidth(Number(event.target.value));
   };
 
-  const handlePenBtn = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handlePenBtn = (
+    event: React.MouseEvent<HTMLButtonElement>,
+    tool: string
+  ) => {
     event.stopPropagation();
     setContentState((prev) => ({
       ...prev,
-      tool: "pen",
+      tool,
     }));
     console.log("Ali");
   };
@@ -75,12 +90,20 @@ function Menu() {
     }
   };
 
-  const handleEraserBtn = () => {
-    setContentState((prev) => ({ ...prev, tool: "eraser" }));
+  const handleEraserBtn = (
+    event: React.MouseEvent<HTMLButtonElement>,
+    tool: string
+  ) => {
+    event.stopPropagation();
+    setContentState((prev) => ({ ...prev, tool }));
   };
 
-  const handleTextBtn = () => {
-    setContentState((prev) => ({ ...prev, tool: "text" }));
+  const handleTextBtn = (
+    event: React.MouseEvent<HTMLButtonElement>,
+    tool: string
+  ) => {
+    event.stopPropagation();
+    setContentState((prev) => ({ ...prev, tool }));
   };
 
   const handleElements = () => {
@@ -213,15 +236,12 @@ function Menu() {
             }`}
       >
         <h2 className="text-2xl mb-6 text-black">Tools</h2>
-        <div
-          className="flex justify-center gap-4 w-full"
-          onClick={handleShapeBtn}
-        >
+        <div className="flex justify-center gap-4 w-full">
           <button
             className={`py-2 px-4 rounded cursor-pointer ${
               contentState.tool === "pen" ? "bg-green-500" : "bg-gray-700"
             } hover:bg-green-500 text-white`}
-            onClick={handlePenBtn}
+            onClick={(event) => handlePenBtn(event, "pen")}
             id="pen"
           >
             <FaPen />
@@ -230,7 +250,7 @@ function Menu() {
             className={`py-2 px-4 rounded cursor-pointer ${
               contentState.tool === "eraser" ? "bg-green-500" : "bg-gray-700"
             } hover:bg-green-500 text-white`}
-            onClick={handleEraserBtn}
+            onClick={(event) => handleEraserBtn(event, "eraser")}
             id="eraser"
           >
             <FaEraser />
@@ -239,8 +259,8 @@ function Menu() {
             className={`py-2 px-4 rounded cursor-pointer ${
               contentState.tool === "text" ? "bg-green-500" : "bg-gray-700"
             } hover:bg-green-500 text-white`}
-            onClick={handleTextBtn}
-            id="eraser"
+            onClick={(event) => handleTextBtn(event, "text")}
+            id="text"
           >
             <FaTextHeight />
           </button>
