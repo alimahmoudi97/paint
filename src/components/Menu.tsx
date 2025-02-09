@@ -35,6 +35,7 @@ function Menu() {
       ...prev,
       colorShape: color,
       strokeColor: color,
+      tool: "color",
     }));
   };
 
