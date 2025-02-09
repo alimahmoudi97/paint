@@ -1,7 +1,11 @@
 import { Object, Group, TPointerEventInfo } from "fabric";
 import { BaseProps } from "../types/types";
 
-export const EraserTool = ({ canvas, contentState }: BaseProps) => {
+export const EraserTool = ({
+  canvas,
+  contentState,
+  setContentState,
+}: BaseProps) => {
   let isDown = false;
   let objectToRemove: Object[] = [];
 
@@ -45,6 +49,8 @@ export const EraserTool = ({ canvas, contentState }: BaseProps) => {
 
     objectToRemove.push(e.target);
     e.target.set({ opacity: 0.5 });
+
+    console.log("Object To Remove:", objectToRemove);
     canvas.renderAll();
   };
 
@@ -53,7 +59,7 @@ export const EraserTool = ({ canvas, contentState }: BaseProps) => {
 
     objectToRemove.forEach((object) => {
       if (object.type === "group") {
-        (object as Group).forEachObject((object: Object) => {
+        object.forEachObject((object) => {
           canvas.remove(object);
         });
         canvas.remove(object);
@@ -72,6 +78,8 @@ export const EraserTool = ({ canvas, contentState }: BaseProps) => {
     canvas.forEachObject((object) => {
       object.set({ selectable: true, perPixelTargetFind: true });
     });
+
+    setContentState((prev) => ({ ...prev, tool: "select" }));
     canvas.renderAll();
   };
 

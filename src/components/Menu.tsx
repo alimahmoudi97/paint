@@ -7,7 +7,7 @@ import {
   FaSquare,
   FaTextHeight,
 } from "react-icons/fa";
-import { FiTriangle } from "react-icons/fi";
+import { FiMousePointer, FiTriangle } from "react-icons/fi";
 import { RiApps2AddLine } from "react-icons/ri";
 import { FaPencil } from "react-icons/fa6";
 
@@ -51,6 +51,7 @@ function Menu() {
       colorShape: color,
       strokeColor: color,
       tool: "color",
+      type: "draw",
     }));
   };
 
@@ -99,6 +100,14 @@ function Menu() {
   };
 
   const handleTextBtn = (
+    event: React.MouseEvent<HTMLButtonElement>,
+    tool: string
+  ) => {
+    event.stopPropagation();
+    setContentState((prev) => ({ ...prev, tool }));
+  };
+
+  const handleSelectBtn = (
     event: React.MouseEvent<HTMLButtonElement>,
     tool: string
   ) => {
@@ -263,6 +272,15 @@ function Menu() {
             id="text"
           >
             <FaTextHeight />
+          </button>
+          <button
+            className={`py-2 px-4 rounded cursor-pointer ${
+              contentState.tool === "select" ? "bg-green-500" : "bg-gray-700"
+            } hover:bg-green-500 text-white`}
+            onClick={(event) => handleSelectBtn(event, "select")}
+            id="select"
+          >
+            <FiMousePointer />
           </button>
         </div>
         <h2 className="text-2xl mt-6 mb-4 text-black">Colors</h2>
