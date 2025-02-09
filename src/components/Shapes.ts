@@ -100,6 +100,7 @@ export const Shape = ({ canvas, contentState, setContentState }: BaseProps) => {
   const onMouseUp = () => {
     if (contentState.tool !== "shape") return;
     isDrawing = false;
+
     canvas.isDrawingMode = false;
 
     setContentState((prev) => ({ ...prev, tool: "shape" }));

@@ -48,19 +48,26 @@ function CanvasWrapper() {
       setContentState,
     });
 
+    const penEventListener = PenTool({
+      canvas: fabricRef.current,
+      contentState,
+      setContentState,
+    });
+
     return () => {
       shapeEventListener.removeEventListener();
       eraserEventListener.removeEventListener();
       textEventListener.textEventListener();
+      penEventListener.removeEventListeners();
     };
   }, [contentState]);
 
-  useEffect(() => {
-    if (fabricRef.current && contentState.tool == "pen") {
-      PenTool({ canvas: fabricRef.current, contentState, setContentState });
-      console.log(contentState.tool);
-    }
-  }, [contentState.tool]);
+  // useEffect(() => {
+  //   if (fabricRef.current && contentState.tool == "pen") {
+  //     PenTool({ canvas: fabricRef.current, contentState, setContentState });
+  //     console.log(contentState.tool);
+  //   }
+  // }, [contentState.tool]);
 
   useEffect(() => {
     if (!canvasRef.current) return;
