@@ -19,6 +19,8 @@ function ContextProvider({ children }: { children: ReactNode }) {
     strokeWidth: 2,
     strokeColor: "#000",
     fillShape: false,
+    expandDrawMenu: false,
+    expandElementsMenu: false,
   });
   const contentStateRef = useRef<ContentState | null>(null);
 

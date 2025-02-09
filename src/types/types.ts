@@ -14,6 +14,8 @@ export interface ContentState {
   strokeWidth: number;
   strokeColor: string;
   fillShape: boolean;
+  expandElementsMenu: boolean;
+  expandDrawMenu: boolean;
 }
 
 export interface CanvasContextProps {
