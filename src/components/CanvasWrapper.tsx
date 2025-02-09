@@ -24,6 +24,11 @@ function CanvasWrapper() {
     const canvas = new Canvas(canvasRef.current, { perPixelTargetFind: true });
     fabricRef.current = canvas;
 
+    canvas.selectionDashArray = [10, 20];
+    canvas.selectionLineWidth = 1;
+    canvas.selectionColor = "transparent";
+    canvas.selectionBorderColor = "blue";
+
     canvas._renderBackground = function (ctx) {
       ctx.fillStyle = "white";
       ctx.fillRect(0, 0, canvas.width, canvas.height);

@@ -60,7 +60,7 @@ export const Shape = ({ canvas, contentState, setContentState }: BaseProps) => {
         return;
     }
     canvas.add(shape);
-    setContentState((prev) => ({ ...prev, tool: "shape" }));
+    setContentState((prev) => ({ ...prev, tool: "select" }));
     isDrawing = true;
   };
 
@@ -103,7 +103,7 @@ export const Shape = ({ canvas, contentState, setContentState }: BaseProps) => {
 
     canvas.isDrawingMode = false;
 
-    setContentState((prev) => ({ ...prev, tool: "shape" }));
+    setContentState((prev) => ({ ...prev, tool: "select" }));
   };
 
   canvas.on("mouse:down", onMouseDown);
