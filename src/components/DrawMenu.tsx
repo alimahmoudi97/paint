@@ -10,20 +10,21 @@ import selectMouse from "../assets/svg/select-mouse.svg";
 import { useContextCanvas } from "../context/Context";
 
 function DrawMenu() {
-  const { contentState, setContentState } = useContextCanvas();
+  const { setContentState } = useContextCanvas();
   const [isPenClicked, setIsPenClicked] = useState("");
 
   const handlePenClick = (type: string) => {
     setIsPenClicked(type);
     if (type === "eraser") {
-      if (contentState?.canvas) {
-        contentState.canvas.isDrawingMode = false;
-      }
       setContentState((prev) => ({ ...prev, tool: type, brushType: type }));
       console.log("TYPE:", type);
     } else {
       setContentState((prev) => ({ ...prev, tool: "pen", brushType: type }));
     }
+  };
+
+  const handleSelectIcon = () => {
+    setContentState((prev) => ({ ...prev, tool: "select", brushType: "" }));
   };
 
   return (
@@ -86,7 +87,11 @@ function DrawMenu() {
         </div>
       </div>
       <div className="flex flex-col gap-4 mt-4">
-        <button type="button" aria-pressed="false">
+        <button
+          type="button"
+          onClick={handleSelectIcon}
+          className="cursor-pointer flex justify-center hover:bg-blue-100"
+        >
           <ReactSVG src={selectMouse} />
         </button>
         <button type="button" aria-label="Settings" aria-expanded="false">

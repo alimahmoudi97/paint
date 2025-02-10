@@ -141,6 +141,10 @@ function CanvasWrapper() {
 
   useEffect(() => {
     if (!canvasRef.current) return;
+    if (contentState.canvas && contentState.tool !== "pen") {
+      contentState.canvas.isDrawingMode = false;
+    }
+
     console.log(contentState.tool);
   }, [contentState]);
 
