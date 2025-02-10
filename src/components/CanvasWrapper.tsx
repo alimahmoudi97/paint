@@ -1,4 +1,4 @@
-import { Canvas } from "fabric";
+import { Canvas, Circle } from "fabric";
 import { useEffect, useRef } from "react";
 import { useContextCanvas } from "../context/Context";
 import { Shape } from "./Shapes";
@@ -16,6 +16,7 @@ function CanvasWrapper() {
   const { contentState, setContentState } = useContextCanvas();
   const canvasRef = useRef(null);
   const fabricRef = useRef<Canvas | null>(null);
+  const cursorCircleRef = useRef(null);
 
   useEffect(() => {
     if (!canvasRef.current) return;
@@ -73,8 +74,27 @@ function CanvasWrapper() {
 
     setContentState((prev) => ({ ...prev, canvas: canvas }));
 
+    const cursorCircle = new Circle({
+      radius: 5,
+      fill: "red",
+      selectable: false,
+      evented: false,
+    });
+    cursorCircleRef.current = cursorCircle;
+    canvas.add(cursorCircle);
+
+    const handleMouseMove = (event) => {
+      const pointer = canvas.getPointer(event.e);
+      cursorCircle.set({ left: pointer.x, top: pointer.y });
+      cursorCircle.setCoords();
+      canvas.renderAll();
+    };
+
+    canvas.on("mouse:move", handleMouseMove);
+
     return () => {
       canvas.dispose();
+      canvas.off("mouse:move", handleMouseMove);
     };
   }, []);
 
