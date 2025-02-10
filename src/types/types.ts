@@ -16,6 +16,7 @@ export interface ContentState {
   fillShape: boolean;
   expandElementsMenu: boolean;
   expandDrawMenu: boolean;
+  brushType: string;
 }
 
 export interface CanvasContextProps {

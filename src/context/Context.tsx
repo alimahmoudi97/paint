@@ -21,6 +21,7 @@ function ContextProvider({ children }: { children: ReactNode }) {
     fillShape: false,
     expandDrawMenu: false,
     expandElementsMenu: false,
+    brushType: "",
   });
   const contentStateRef = useRef<ContentState | null>(null);
 

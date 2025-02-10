@@ -107,9 +107,6 @@ export const EraserTool = ({
 
   canvas.on("mouse:down", onMouseDown);
   canvas.on("mouse:move", onMouseMove);
-  canvas.on("selection:created", () => {
-    console.log("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH");
-  });
   canvas.on("mouse:up", onMouseUp);
 
   return {

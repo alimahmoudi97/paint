@@ -7,12 +7,23 @@ import highliter from "../assets/svg/highlighter.svg";
 import eraser from "../assets/svg/eraser.svg";
 import settingDraw from "../assets/svg/draw-setting.svg";
 import selectMouse from "../assets/svg/select-mouse.svg";
+import { useContextCanvas } from "../context/Context";
 
 function DrawMenu() {
+  const { contentState, setContentState } = useContextCanvas();
   const [isPenClicked, setIsPenClicked] = useState("");
 
   const handlePenClick = (type: string) => {
     setIsPenClicked(type);
+    if (type === "eraser") {
+      if (contentState?.canvas) {
+        contentState.canvas.isDrawingMode = false;
+      }
+      setContentState((prev) => ({ ...prev, tool: type, brushType: type }));
+      console.log("TYPE:", type);
+    } else {
+      setContentState((prev) => ({ ...prev, tool: "pen", brushType: type }));
+    }
   };
 
   return (

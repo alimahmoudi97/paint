@@ -1,15 +1,34 @@
-import { PencilBrush } from "fabric";
+import { PencilBrush, CircleBrush, SprayBrush, PatternBrush } from "fabric";
 import { BaseProps } from "../types/types";
 
 function PenTool({ canvas, contentState, setContentState }: BaseProps) {
-  if (contentState.tool == "pen") {
-    // console.log("canvas:", canvas);
-    canvas.freeDrawingBrush = new PencilBrush(canvas);
+  const setBrush = (brushType: string) => {
+    switch (brushType) {
+      case "pencil":
+        canvas.freeDrawingBrush = new PencilBrush(canvas);
+        break;
+      case "marker":
+        canvas.freeDrawingBrush = new CircleBrush(canvas);
+        break;
+      case "highlighter":
+        canvas.freeDrawingBrush = new SprayBrush(canvas);
+        break;
+      case "pattern":
+        canvas.freeDrawingBrush = new PatternBrush(canvas);
+        break;
+      default:
+        canvas.freeDrawingBrush = new PencilBrush(canvas);
+    }
+
     if (canvas.freeDrawingBrush) {
       canvas.isDrawingMode = true;
       canvas.freeDrawingBrush.color = "#000000";
       canvas.freeDrawingBrush.width = 5;
     }
+  };
+
+  if (contentState.tool === "pen") {
+    setBrush(contentState.brushType);
   }
 
   const onMouseUp = () => {
