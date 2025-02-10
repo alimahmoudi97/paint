@@ -10,6 +10,7 @@ import {
 import { FiMousePointer, FiTriangle } from "react-icons/fi";
 import { RiApps2AddLine } from "react-icons/ri";
 import { FaPencil } from "react-icons/fa6";
+import DrawMenu from "./DrawMenu";
 
 function Menu() {
   const { contentState, setContentState } = useContextCanvas();
@@ -233,7 +234,7 @@ function Menu() {
         <FaPencil className="w-9 h-9" />
         <span className="text-base mb-6">Draw</span>
       </div>
-      <div
+      {/* <div
         className={`absolute left-40 top-0 bottom-0 w-90 z-999999 border rounded-br-2xl
            rounded-tr-2xl bg-white transition-all duration-200 ease-in-out
            shadow shadow-blue-500
@@ -296,8 +297,20 @@ function Menu() {
             />
           ))}
         </div>
+      </div> */}
+      <div
+        className={`absolute left-40 top-0 bottom-0 w-90 z-999999 border rounded-br-2xl
+           rounded-tr-2xl bg-white transition-all duration-200 ease-in-out
+           shadow shadow-blue-500
+           flex flex-col items-center
+            ${
+              contentState.expandDrawMenu
+                ? "opacity-100 visible"
+                : "opacity-0 invisible"
+            }`}
+      >
+        <DrawMenu />
       </div>
-
       <button
         className="text-base py-2 px-1 mt-6 rounded cursor-pointer bg-blue-500 hover:bg-blue-700 text-white"
         onClick={handleExport}
