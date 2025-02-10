@@ -157,7 +157,7 @@ function Menu() {
     };
   }, [contentState]);
   return (
-    <div className="h-screen bg-gray-800 text-white flex flex-col items-center p-4 shadow-lg z-9999999 relative">
+    <div className="h-screen bg-gray-800 text-white flex flex-col items-center p-4 z-100 shadow-lg relative">
       <div
         className="flex flex-col items-center cursor-pointer"
         onClick={handleElements}
@@ -235,8 +235,8 @@ function Menu() {
         <span className="text-base mb-6">Draw</span>
       </div>
       <div
-        className={`absolute left-40 top-0 py-8 w-40 z-99 border rounded-br-2xl
-           rounded-tr-2xl bg-red-100 transition-all duration-200 ease-in-out
+        className={`absolute left-40 top-0 py-8 border rounded-br-2xl
+           rounded-tr-2xl bg-white transition-all duration-200 ease-in-out
            shadow shadow-blue-500
            flex flex-col items-center
            
