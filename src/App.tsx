@@ -7,10 +7,10 @@ function App() {
   return (
     <ContextProvider>
       <div className="grid grid-cols-12 h-screen">
-        <div className="col-span-1 bg-amber-200">
+        <div className="col-span-1">
           <Menu />
         </div>
-        <div className="col-span-11 bg-gray-100">
+        <div className="col-span-11">
           <Canvas />
         </div>
       </div>

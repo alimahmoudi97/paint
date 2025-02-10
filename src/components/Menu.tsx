@@ -157,7 +157,7 @@ function Menu() {
     };
   }, [contentState]);
   return (
-    <div className="h-screen bg-gray-800 text-white flex flex-col items-center p-4 shadow-lg">
+    <div className="h-screen bg-gray-800 text-white flex flex-col items-center p-4 shadow-lg z-9999999 relative">
       <div
         className="flex flex-col items-center cursor-pointer"
         onClick={handleElements}
@@ -234,75 +234,12 @@ function Menu() {
         <FaPencil className="w-9 h-9" />
         <span className="text-base mb-6">Draw</span>
       </div>
-      {/* <div
-        className={`absolute left-40 top-0 bottom-0 w-90 z-999999 border rounded-br-2xl
-           rounded-tr-2xl bg-white transition-all duration-200 ease-in-out
-           shadow shadow-blue-500
-           flex flex-col items-center
-            ${
-              contentState.expandDrawMenu
-                ? "opacity-100 visible"
-                : "opacity-0 invisible"
-            }`}
-      >
-        <h2 className="text-2xl mb-6 text-black">Tools</h2>
-        <div className="flex justify-center gap-4 w-full">
-          <button
-            className={`py-2 px-4 rounded cursor-pointer ${
-              contentState.tool === "pen" ? "bg-green-500" : "bg-gray-700"
-            } hover:bg-green-500 text-white`}
-            onClick={(event) => handlePenBtn(event, "pen")}
-            id="pen"
-          >
-            <FaPen />
-          </button>
-          <button
-            className={`py-2 px-4 rounded cursor-pointer ${
-              contentState.tool === "eraser" ? "bg-green-500" : "bg-gray-700"
-            } hover:bg-green-500 text-white`}
-            onClick={(event) => handleEraserBtn(event, "eraser")}
-            id="eraser"
-          >
-            <FaEraser />
-          </button>
-          <button
-            className={`py-2 px-4 rounded cursor-pointer ${
-              contentState.tool === "text" ? "bg-green-500" : "bg-gray-700"
-            } hover:bg-green-500 text-white`}
-            onClick={(event) => handleTextBtn(event, "text")}
-            id="text"
-          >
-            <FaTextHeight />
-          </button>
-          <button
-            className={`py-2 px-4 rounded cursor-pointer ${
-              contentState.tool === "select" ? "bg-green-500" : "bg-gray-700"
-            } hover:bg-green-500 text-white`}
-            onClick={(event) => handleSelectBtn(event, "select")}
-            id="select"
-          >
-            <FiMousePointer />
-          </button>
-        </div>
-        <h2 className="text-2xl mt-6 mb-4 text-black">Colors</h2>
-        <div className="flex flex-wrap justify-center gap-2">
-          {["red", "green", "blue", "yellow", "purple"].map((color) => (
-            <button
-              key={color}
-              className={`w-9 h-9 rounded-full cursor-pointer ${
-                selectedColor === color ? "ring-2 ring-white" : ""
-              }`}
-              style={{ backgroundColor: color }}
-              onClick={() => handleColorChange(color)}
-            />
-          ))}
-        </div>
-      </div> */}
       <div
-        className={`absolute left-40 top-0 bottom-0 w-90 z-999999 border rounded-br-2xl
-           rounded-tr-2xl bg-white transition-all duration-200 ease-in-out
+        className={`absolute left-40 top-0 py-8 w-40 z-99 border rounded-br-2xl
+           rounded-tr-2xl bg-red-100 transition-all duration-200 ease-in-out
            shadow shadow-blue-500
            flex flex-col items-center
+           
             ${
               contentState.expandDrawMenu
                 ? "opacity-100 visible"

@@ -19,7 +19,7 @@ function DrawMenu() {
         <div className="flex flex-col gap-2">
           <div title="Pen" role="button">
             <span aria-hidden="true" style={{ color: "rgb(5, 113, 211)" }}>
-              <ReactSVG src={pen} />
+              <ReactSVG src={pen} className="w-28" />
             </span>
           </div>
           <div title="Marker" role="button">
