@@ -3,14 +3,19 @@ import { useContextCanvas } from "../context/Context";
 import {
   FaCircle,
   FaEraser,
+  FaExpand,
   FaPen,
+  FaSearchMinus,
+  FaSearchPlus,
   FaSquare,
   FaTextHeight,
+  FaUndo,
 } from "react-icons/fa";
 import { FiMousePointer, FiTriangle } from "react-icons/fi";
 import { RiApps2AddLine } from "react-icons/ri";
 import { FaPencil } from "react-icons/fa6";
 import DrawMenu from "./DrawMenu";
+import { Point, TEvent } from "fabric";
 
 function Menu() {
   const { contentState, setContentState } = useContextCanvas();
@@ -100,10 +105,7 @@ function Menu() {
     setContentState((prev) => ({ ...prev, tool }));
   };
 
-  const handleTextBtn = (
-    event: React.MouseEvent<HTMLButtonElement>,
-    tool: string
-  ) => {
+  const handleTextBtn = (event: React.MouseEvent<SVGElement>, tool: string) => {
     event.stopPropagation();
     setContentState((prev) => ({ ...prev, tool }));
   };
@@ -131,6 +133,72 @@ function Menu() {
       expandElementsMenu: false,
     }));
   };
+
+  const handleZoomOut = () => {
+    const canvas = contentState.canvas;
+    if (!canvas) return;
+    const zoom = canvas.getZoom();
+    canvas.setZoom(zoom / 1.1);
+  };
+
+  const handleZoomIn = () => {
+    const canvas = contentState.canvas;
+    if (!canvas) return;
+    const zoom = canvas.getZoom();
+    canvas.setZoom(zoom * 1.1);
+  };
+
+  const handleFit = () => {
+    const canvas = contentState.canvas;
+    if (canvas) {
+      const objects = canvas.getObjects();
+      if (objects.length > 0) {
+        const boundingRect = canvas.getActiveObject()?.getBoundingRect() || {
+          width: canvas.width,
+          height: canvas.height,
+        };
+        const scaleX = canvas.width / boundingRect.width;
+        const scaleY = canvas.height / boundingRect.height;
+        const scale = Math.min(scaleX, scaleY);
+        canvas.setZoom(scale);
+        canvas.viewportTransform = [scale, 0, 0, scale, 0, 0];
+        canvas.renderAll();
+      }
+    }
+  };
+
+  const handleResetZoom = () => {
+    const canvas = contentState.canvas;
+    if (!canvas) return;
+    canvas.setZoom(1);
+    canvas.viewportTransform = [1, 0, 0, 1, 0, 0];
+    canvas.renderAll();
+  };
+  const handleMouseWheel = (opt: TEvent<WheelEvent>) => {
+    const canvas = contentState.canvas;
+    if (!canvas) return;
+    const delta = opt.e.deltaY;
+    let zoom = canvas.getZoom();
+    zoom *= 0.999 ** delta;
+    if (zoom > 20) zoom = 20;
+    if (zoom < 0.01) zoom = 0.01;
+    canvas.zoomToPoint(new Point(opt.e.offsetX, opt.e.offsetY), zoom);
+    opt.e.preventDefault();
+    opt.e.stopPropagation();
+  };
+
+  useEffect(() => {
+    const canvas = contentState.canvas;
+    if (canvas) {
+      canvas.on("mouse:wheel", handleMouseWheel);
+    }
+
+    return () => {
+      if (canvas) {
+        canvas.off("mouse:wheel", handleMouseWheel);
+      }
+    };
+  }, [contentState.canvas]);
   useEffect(() => {
     const canvas = contentState.canvas;
 
@@ -254,6 +322,32 @@ function Menu() {
           onClick={(event) => handleTextBtn(event, "text")}
         />
         <span className="text-base mb-6">Elements</span>
+      </div>
+      <div className="flex flex-col items-center gap-4 mt-6">
+        <button
+          className="text-base py-2 px-1 rounded cursor-pointer bg-blue-500 hover:bg-blue-700 text-white"
+          onClick={handleZoomIn}
+        >
+          <FaSearchPlus />
+        </button>
+        <button
+          className="text-base py-2 px-1 rounded cursor-pointer bg-blue-500 hover:bg-blue-700 text-white"
+          onClick={handleZoomOut}
+        >
+          <FaSearchMinus />
+        </button>
+        <button
+          className="text-base py-2 px-1 rounded cursor-pointer bg-blue-500 hover:bg-blue-700 text-white"
+          onClick={handleFit}
+        >
+          <FaExpand />
+        </button>
+        <button
+          className="text-base py-2 px-1 rounded cursor-pointer bg-blue-500 hover:bg-blue-700 text-white"
+          onClick={handleResetZoom}
+        >
+          <FaUndo />
+        </button>
       </div>
       <button
         className="text-base py-2 px-1 mt-6 rounded cursor-pointer bg-blue-500 hover:bg-blue-700 text-white"
