@@ -248,6 +248,13 @@ function Menu() {
       >
         <DrawMenu />
       </div>
+      <div className="flex flex-col items-center cursor-pointer">
+        <FaTextHeight
+          className="w-9 h-9"
+          onClick={(event) => handleTextBtn(event, "text")}
+        />
+        <span className="text-base mb-6">Elements</span>
+      </div>
       <button
         className="text-base py-2 px-1 mt-6 rounded cursor-pointer bg-blue-500 hover:bg-blue-700 text-white"
         onClick={handleExport}
