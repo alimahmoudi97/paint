@@ -8,14 +8,17 @@ import {
   FaSearchMinus,
   FaSearchPlus,
   FaSquare,
+  FaStop,
   FaTextHeight,
   FaUndo,
+  FaVideo,
 } from "react-icons/fa";
 import { FiMousePointer, FiTriangle } from "react-icons/fi";
 import { RiApps2AddLine } from "react-icons/ri";
 import { FaPencil } from "react-icons/fa6";
 import DrawMenu from "./DrawMenu";
 import { Point, TEvent } from "fabric";
+import useCanvasRecorder from "../hooks/useCanvasRecorder";
 
 function Menu() {
   const { contentState, setContentState } = useContextCanvas();
@@ -23,6 +26,8 @@ function Menu() {
   const [selectedColor, setSelectedColor] = useState("red");
   const [isFillShape, setFillShape] = useState<boolean>(true);
   const [strokeWidth, setStrokeWidth] = useState<number>(1);
+  const { startRecording, stopRecording, recording, videoURL } =
+    useCanvasRecorder();
 
   const handleShapeBtn = (type: string) => {
     setContentState((prev) => ({
@@ -355,6 +360,32 @@ function Menu() {
       >
         Export as Image
       </button>
+      <div className="flex flex-col items-center gap-4 mt-6">
+        {recording ? (
+          <button
+            className="text-base py-2 px-1 rounded cursor-pointer bg-red-500 hover:bg-red-700 text-white"
+            onClick={stopRecording}
+          >
+            <FaStop />
+          </button>
+        ) : (
+          <button
+            className="text-base py-2 px-1 rounded cursor-pointer bg-green-500 hover:bg-green-700 text-white"
+            onClick={startRecording}
+          >
+            <FaVideo />
+          </button>
+        )}
+        {videoURL && (
+          <a
+            href={videoURL}
+            download="canvas-recording.webm"
+            className="text-base py-2 px-1 rounded cursor-pointer bg-blue-500 hover:bg-blue-700 text-white"
+          >
+            Download Video
+          </a>
+        )}
+      </div>
     </div>
   );
 }
