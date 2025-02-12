@@ -17,7 +17,7 @@ import { FiMousePointer, FiTriangle } from "react-icons/fi";
 import { RiApps2AddLine } from "react-icons/ri";
 import { FaPencil } from "react-icons/fa6";
 import DrawMenu from "./DrawMenu";
-import { Point, TEvent } from "fabric";
+import { FabricImage, Image, Point, TEvent } from "fabric";
 import useCanvasRecorder from "../hooks/useCanvasRecorder";
 
 function Menu() {
@@ -190,6 +190,29 @@ function Menu() {
     canvas.zoomToPoint(new Point(opt.e.offsetX, opt.e.offsetY), zoom);
     opt.e.preventDefault();
     opt.e.stopPropagation();
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        const dataUrl = e.target?.result as string;
+        const image = await Image.fromURL(dataUrl);
+        contentState.canvas?.add(image);
+        contentState.canvas?.renderAll();
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleUrlChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const url = event.target.value;
+    const image = await Image.fromURL(url);
+    contentState.canvas?.add(image);
+    contentState.canvas?.renderAll();
   };
 
   useEffect(() => {
@@ -385,6 +408,27 @@ function Menu() {
             Download Video
           </a>
         )}
+      </div>
+      <div className="flex flex-col items-center gap-4 mt-6">
+        <label htmlFor="fileInput" className="text-base mb-2">
+          Upload Image:
+        </label>
+        <input
+          type="file"
+          id="fileInput"
+          accept="image/*"
+          onChange={handleFileChange}
+          className="text-sm mb-4"
+        />
+        <label htmlFor="urlInput" className="text-base mb-2">
+          Image URL:
+        </label>
+        <input
+          type="text"
+          id="urlInput"
+          onChange={handleUrlChange}
+          className="text-base mb-4"
+        />
       </div>
     </div>
   );

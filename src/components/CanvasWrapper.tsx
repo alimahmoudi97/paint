@@ -148,6 +148,24 @@ function CanvasWrapper() {
     console.log(contentState.tool);
   }, [contentState]);
 
+  useEffect(() => {
+    if (!fabricRef.current) return;
+    const canvas = fabricRef.current;
+
+    const activeObject = canvas.getActiveObject();
+    if (activeObject) {
+      activeObject.set({
+        fill: contentState.fillShape ? contentState.colorShape : "transparent",
+        stroke: contentState.strokeColor,
+      });
+      canvas.renderAll();
+    }
+  }, [
+    contentState.colorShape,
+    contentState.strokeColor,
+    contentState.fillShape,
+  ]);
+
   return (
     <div>
       <canvas ref={canvasRef} id="canvas" className="border border-amber-300" />

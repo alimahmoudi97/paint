@@ -10,7 +10,7 @@ import selectMouse from "../assets/svg/select-mouse.svg";
 import { useContextCanvas } from "../context/Context";
 
 function DrawMenu() {
-  const { setContentState } = useContextCanvas();
+  const { contentState, setContentState } = useContextCanvas();
   const [isPenClicked, setIsPenClicked] = useState("");
 
   const handlePenClick = (type: string) => {
@@ -25,6 +25,15 @@ function DrawMenu() {
 
   const handleSelectIcon = () => {
     setContentState((prev) => ({ ...prev, tool: "select", brushType: "" }));
+  };
+
+  const handleColorChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const color = event.target.value;
+    setContentState((prev) => ({
+      ...prev,
+      colorShape: color,
+      strokeColor: color,
+    }));
   };
 
   return (
@@ -97,6 +106,17 @@ function DrawMenu() {
         <button type="button" aria-label="Settings" aria-expanded="false">
           <ReactSVG src={settingDraw} />
         </button>
+      </div>
+      <div className="flex flex-col gap-4 mt-4">
+        <label htmlFor="colorPicker" className="text-black">
+          Choose Color:
+        </label>
+        <input
+          type="color"
+          id="colorPicker"
+          value={contentState.colorShape}
+          onChange={handleColorChange}
+        />
       </div>
     </div>
   );
