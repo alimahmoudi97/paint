@@ -1,14 +1,9 @@
-import {
-  createContext,
-  ReactNode,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { createContext, ReactNode, useEffect, useRef, useState } from "react";
 import { CanvasContextProps, ContentState } from "../types/types";
 
-const CanvasContext = createContext<CanvasContextProps | undefined>(undefined);
+export const CanvasContext = createContext<CanvasContextProps | undefined>(
+  undefined
+);
 
 function ContextProvider({ children }: { children: ReactNode }) {
   const [contentState, setContentState] = useState<ContentState>({
@@ -22,6 +17,9 @@ function ContextProvider({ children }: { children: ReactNode }) {
     expandDrawMenu: false,
     expandElementsMenu: false,
     brushType: "",
+    undoStack: [],
+    redoStack: [],
+    name: 0,
   });
   const contentStateRef = useRef<ContentState | null>(null);
 
@@ -35,11 +33,3 @@ function ContextProvider({ children }: { children: ReactNode }) {
   );
 }
 export default ContextProvider;
-
-export const useContextCanvas = () => {
-  const context = useContext(CanvasContext);
-  if (context === undefined) {
-    throw new Error("useContextCanvas must be used within a ContextProvider");
-  }
-  return context;
-};

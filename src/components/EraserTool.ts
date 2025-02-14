@@ -1,4 +1,4 @@
-import { Object, Group, TPointerEventInfo, Rect } from "fabric";
+import { Object, TPointerEventInfo, Group } from "fabric";
 import { BaseProps } from "../types/types";
 
 export const EraserTool = ({
@@ -53,24 +53,24 @@ export const EraserTool = ({
     canvas.renderAll();
   };
 
-  function isObjectInSelectionArea(
-    object: Object,
-    selectionArea: Rect
-  ): boolean {
-    const objectBoundingBox = object.getBoundingRect();
-    const selectionBoundingBox = selectionArea.getBoundingRect();
+  // function isObjectInSelectionArea(
+  //   object: Object,
+  //   selectionArea: Rect
+  // ): boolean {
+  //   const objectBoundingBox = object.getBoundingRect();
+  //   const selectionBoundingBox = selectionArea.getBoundingRect();
 
-    return !(
-      objectBoundingBox.left >
-        selectionBoundingBox.left + selectionBoundingBox.width ||
-      objectBoundingBox.left + objectBoundingBox.width <
-        selectionBoundingBox.left ||
-      objectBoundingBox.top >
-        selectionBoundingBox.top + selectionBoundingBox.height ||
-      objectBoundingBox.top + objectBoundingBox.height <
-        selectionBoundingBox.top
-    );
-  }
+  //   return !(
+  //     objectBoundingBox.left >
+  //       selectionBoundingBox.left + selectionBoundingBox.width ||
+  //     objectBoundingBox.left + objectBoundingBox.width <
+  //       selectionBoundingBox.left ||
+  //     objectBoundingBox.top >
+  //       selectionBoundingBox.top + selectionBoundingBox.height ||
+  //     objectBoundingBox.top + objectBoundingBox.height <
+  //       selectionBoundingBox.top
+  //   );
+  // }
 
   const onMouseUp = (e: TPointerEventInfo) => {
     if (contentState.tool !== "eraser") return;
@@ -81,7 +81,7 @@ export const EraserTool = ({
 
     objectToRemove.forEach((object) => {
       if (object.type === "group") {
-        object.forEachObject((object) => {
+        (object as Group).forEachObject((object) => {
           canvas.remove(object);
         });
         canvas.remove(object);

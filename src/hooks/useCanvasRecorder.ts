@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { useContextCanvas } from "../context/Context";
+import { useContextCanvas } from "./useContextCanvas";
 
 function useCanvasRecorder() {
   const { contentState } = useContextCanvas();

@@ -1,22 +1,23 @@
 import { Canvas, Circle } from "fabric";
 import { useEffect, useRef } from "react";
-import { useContextCanvas } from "../context/Context";
+
 import { Shape } from "./Shapes";
 import PenTool from "./PenTool";
 import { EraserTool } from "./EraserTool";
 import { TextTool } from "./TextTool";
+import { useContextCanvas } from "../hooks/useContextCanvas";
 
 const CELL_SIZE = 30;
 
-function snapToGrid(point) {
-  return Math.round(point / CELL_SIZE) * CELL_SIZE;
-}
+// function snapToGrid(point) {
+//   return Math.round(point / CELL_SIZE) * CELL_SIZE;
+// }
 
 function CanvasWrapper() {
   const { contentState, setContentState } = useContextCanvas();
   const canvasRef = useRef(null);
   const fabricRef = useRef<Canvas | null>(null);
-  const cursorCircleRef = useRef(null);
+  const cursorCircleRef = useRef<Circle | null>(null);
 
   useEffect(() => {
     if (!canvasRef.current) return;
@@ -83,18 +84,18 @@ function CanvasWrapper() {
     cursorCircleRef.current = cursorCircle;
     canvas.add(cursorCircle);
 
-    const handleMouseMove = (event) => {
-      const pointer = canvas.getPointer(event.e);
-      cursorCircle.set({ left: pointer.x, top: pointer.y });
-      cursorCircle.setCoords();
-      canvas.renderAll();
-    };
+    // const handleMouseMove = (event) => {
+    //   const pointer = canvas.getPointer(event.e);
+    //   cursorCircle.set({ left: pointer.x, top: pointer.y });
+    //   cursorCircle.setCoords();
+    //   canvas.renderAll();
+    // };
 
-    canvas.on("mouse:move", handleMouseMove);
+    // canvas.on("mouse:move", handleMouseMove);
 
     return () => {
       canvas.dispose();
-      canvas.off("mouse:move", handleMouseMove);
+      // canvas.off("mouse:move", handleMouseMove);
     };
   }, []);
 

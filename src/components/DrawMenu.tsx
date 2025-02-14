@@ -7,7 +7,7 @@ import highliter from "../assets/svg/highlighter.svg";
 import eraser from "../assets/svg/eraser.svg";
 import settingDraw from "../assets/svg/draw-setting.svg";
 import selectMouse from "../assets/svg/select-mouse.svg";
-import { useContextCanvas } from "../context/Context";
+import { useContextCanvas } from "../hooks/useContextCanvas";
 
 function DrawMenu() {
   const { contentState, setContentState } = useContextCanvas();

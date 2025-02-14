@@ -1,10 +1,8 @@
-import { useEffect, useState } from "react";
-import { useContextCanvas } from "../context/Context";
+import { useEffect, useRef, useState } from "react";
 import {
   FaCircle,
-  FaEraser,
   FaExpand,
-  FaPen,
+  FaRedo,
   FaSearchMinus,
   FaSearchPlus,
   FaSquare,
@@ -13,21 +11,125 @@ import {
   FaUndo,
   FaVideo,
 } from "react-icons/fa";
-import { FiMousePointer, FiTriangle } from "react-icons/fi";
+import { FiTriangle } from "react-icons/fi";
 import { RiApps2AddLine } from "react-icons/ri";
 import { FaPencil } from "react-icons/fa6";
 import DrawMenu from "./DrawMenu";
-import { FabricImage, Image, Point, TEvent } from "fabric";
+import { Image, Point, TEvent } from "fabric";
 import useCanvasRecorder from "../hooks/useCanvasRecorder";
+import { useContextCanvas } from "../hooks/useContextCanvas";
 
 function Menu() {
   const { contentState, setContentState } = useContextCanvas();
   const [selectedShape, setSelectedShape] = useState("");
-  const [selectedColor, setSelectedColor] = useState("red");
+  const [selectedColor] = useState("red");
   const [isFillShape, setFillShape] = useState<boolean>(true);
   const [strokeWidth, setStrokeWidth] = useState<number>(1);
   const { startRecording, stopRecording, recording, videoURL } =
     useCanvasRecorder();
+
+  const history = useRef<string[]>([]);
+  const [currentStateIndex, setCurrentStateIndex] = useState<number>(0);
+
+  let isUndoing = false;
+
+  const saveState = () => {
+    if (isUndoing) return; // Prevent saving state during undo
+    const canvas = contentState.canvas;
+    if (canvas) {
+      const canvasState = JSON.stringify(canvas.toJSON());
+      console.log("Saving state:", canvasState);
+      setContentState((prev) => ({
+        ...prev,
+        undoStack: [...prev.undoStack, canvasState],
+        redoStack: [], // Clear redo stack on new action
+      }));
+    }
+  };
+
+  const undo = () => {
+    const canvas = contentState.canvas;
+    if (!canvas) return;
+
+    const undoStack = [...contentState.undoStack];
+    const redoStack = [...contentState.redoStack];
+
+    console.log("Before undo:", { undoStack, redoStack });
+
+    if (undoStack.length > 0) {
+      const lastItem = undoStack.pop(); // Remove the last state from the undo stack
+      if (lastItem) {
+        redoStack.push(lastItem); // Add it to the redo stack
+      }
+
+      const penultimateItem = undoStack[undoStack.length - 1];
+
+      canvas.clear(); // Clear the canvas
+
+      if (penultimateItem) {
+        isUndoing = true; // Set the flag to prevent saving states
+        canvas.loadFromJSON(penultimateItem, () => {
+          canvas.discardActiveObject();
+          canvas.renderAll(); // Render with the loaded state
+          isUndoing = false; // Reset the flag after loading
+        });
+      } else {
+        // If no penultimate state exists, clear the canvas
+        canvas.renderAll();
+      }
+
+      // Update the content state
+      setContentState((prev) => ({
+        ...prev,
+        undoStack,
+        redoStack,
+      }));
+
+      console.log("After undo:", { undoStack, redoStack });
+    } else {
+      console.log("No states to undo.");
+    }
+  };
+  const redo = () => {
+    const canvas = contentState.canvas;
+    if (!canvas) return;
+
+    const undoStack = [...contentState.undoStack];
+    const redoStack = [...contentState.redoStack];
+
+    console.log("Before redo:", { undoStack, redoStack });
+
+    if (redoStack.length > 0) {
+      const lastRedoItem = redoStack.pop(); // Remove the last state from the redo stack
+      if (lastRedoItem) {
+        undoStack.push(lastRedoItem); // Add it back to the undo stack
+      }
+
+      canvas.clear(); // Clear the canvas
+
+      // Load the state from the last redo item
+      if (lastRedoItem) {
+        canvas.loadFromJSON(lastRedoItem, () => {
+          canvas.discardActiveObject();
+          canvas.renderAll(); // Render with the loaded state
+        });
+      } else {
+        // If no state exists in the redo stack, just render an empty canvas
+        canvas.renderAll();
+      }
+
+      // Update the content state
+      setContentState((prev) => ({
+        ...prev,
+        undoStack,
+        redoStack,
+      }));
+
+      console.log("After redo:", { undoStack, redoStack });
+    } else {
+      console.log("No states to redo.");
+    }
+  };
 
   const handleShapeBtn = (type: string) => {
     setContentState((prev) => ({
@@ -42,29 +144,29 @@ function Menu() {
     setSelectedShape(type);
   };
 
-  const handleDrawBtn = (type: string) => {
-    setContentState((prev) => ({
-      ...prev,
-      type,
-      tool: "tools",
-      colorShape: selectedColor,
-      strokeWidth,
-      fillShape: isFillShape,
-      strokeColor: selectedColor,
-    }));
-    setSelectedShape(type);
-  };
+  // const handleDrawBtn = (type: string) => {
+  //   setContentState((prev) => ({
+  //     ...prev,
+  //     type,
+  //     tool: "tools",
+  //     colorShape: selectedColor,
+  //     strokeWidth,
+  //     fillShape: isFillShape,
+  //     strokeColor: selectedColor,
+  //   }));
+  //   setSelectedShape(type);
+  // };
 
-  const handleColorChange = (color: string) => {
-    setSelectedColor(color);
-    setContentState((prev) => ({
-      ...prev,
-      colorShape: color,
-      strokeColor: color,
-      tool: "color",
-      type: "draw",
-    }));
-  };
+  // const handleColorChange = (color: string) => {
+  //   setSelectedColor(color);
+  //   setContentState((prev) => ({
+  //     ...prev,
+  //     colorShape: color,
+  //     strokeColor: color,
+  //     tool: "color",
+  //     type: "draw",
+  //   }));
+  // };
 
   const handleFillShapeChange = () => {
     setFillShape(!isFillShape);
@@ -76,17 +178,17 @@ function Menu() {
     setStrokeWidth(Number(event.target.value));
   };
 
-  const handlePenBtn = (
-    event: React.MouseEvent<HTMLButtonElement>,
-    tool: string
-  ) => {
-    event.stopPropagation();
-    setContentState((prev) => ({
-      ...prev,
-      tool,
-    }));
-    console.log("Ali");
-  };
+  // const handlePenBtn = (
+  //   event: React.MouseEvent<HTMLButtonElement>,
+  //   tool: string
+  // ) => {
+  //   event.stopPropagation();
+  //   setContentState((prev) => ({
+  //     ...prev,
+  //     tool,
+  //   }));
+  //   console.log("Ali");
+  // };
 
   const handleExport = () => {
     if (contentState.canvas) {
@@ -102,26 +204,26 @@ function Menu() {
     }
   };
 
-  const handleEraserBtn = (
-    event: React.MouseEvent<HTMLButtonElement>,
-    tool: string
-  ) => {
-    event.stopPropagation();
-    setContentState((prev) => ({ ...prev, tool }));
-  };
+  // const handleEraserBtn = (
+  //   event: React.MouseEvent<HTMLButtonElement>,
+  //   tool: string
+  // ) => {
+  //   event.stopPropagation();
+  //   setContentState((prev) => ({ ...prev, tool }));
+  // };
 
   const handleTextBtn = (event: React.MouseEvent<SVGElement>, tool: string) => {
     event.stopPropagation();
     setContentState((prev) => ({ ...prev, tool }));
   };
 
-  const handleSelectBtn = (
-    event: React.MouseEvent<HTMLButtonElement>,
-    tool: string
-  ) => {
-    event.stopPropagation();
-    setContentState((prev) => ({ ...prev, tool }));
-  };
+  // const handleSelectBtn = (
+  //   event: React.MouseEvent<HTMLButtonElement>,
+  //   tool: string
+  // ) => {
+  //   event.stopPropagation();
+  //   setContentState((prev) => ({ ...prev, tool }));
+  // };
 
   const handleElements = () => {
     setContentState((pre) => ({
@@ -252,6 +354,30 @@ function Menu() {
       // canvas?.off("selection:updated", handleObjectSelected);
     };
   }, [contentState]);
+
+  useEffect(() => {
+    const canvas = contentState.canvas;
+    if (canvas) {
+      canvas.on("object:added", saveState);
+      canvas.on("object:modified", saveState);
+      canvas.on("object:removed", saveState);
+    }
+
+    return () => {
+      if (canvas) {
+        canvas.off("object:added", saveState);
+        canvas.off("object:modified", saveState);
+        canvas.off("object:removed", saveState);
+      }
+    };
+  }, [contentState.canvas]);
+
+  useEffect(() => {
+    console.log(contentState);
+  }, [contentState]);
+  useEffect(() => {
+    console.log("currentStateIndex:", currentStateIndex);
+  }, [currentStateIndex]);
   return (
     <div className="h-screen bg-gray-800 text-white flex flex-col items-center p-4 z-100 shadow-lg relative">
       <div
@@ -375,6 +501,18 @@ function Menu() {
           onClick={handleResetZoom}
         >
           <FaUndo />
+        </button>
+        <button
+          className="text-base py-2 px-1 rounded cursor-pointer bg-blue-500 hover:bg-blue-700 text-white"
+          onClick={undo}
+        >
+          <FaUndo />
+        </button>
+        <button
+          className="text-base py-2 px-1 rounded cursor-pointer bg-blue-500 hover:bg-blue-700 text-white"
+          onClick={redo}
+        >
+          <FaRedo />
         </button>
       </div>
       <button

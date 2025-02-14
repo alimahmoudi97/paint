@@ -17,6 +17,9 @@ export interface ContentState {
   expandElementsMenu: boolean;
   expandDrawMenu: boolean;
   brushType: string;
+  undoStack: string[];
+  redoStack: string[];
+  name: number;
 }
 
 export interface CanvasContextProps {
