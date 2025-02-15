@@ -1,4 +1,4 @@
-import { Canvas, Circle } from "fabric";
+import { Canvas, Circle, Line } from "fabric";
 import { useEffect, useRef } from "react";
 
 import { Shape } from "./Shapes";
@@ -18,6 +18,8 @@ function CanvasWrapper() {
   const canvasRef = useRef(null);
   const fabricRef = useRef<Canvas | null>(null);
   const cursorCircleRef = useRef<Circle | null>(null);
+  const horizontalGuideRef = useRef<Line | null>(null);
+  const verticalGuideRef = useRef<Line | null>(null);
 
   useEffect(() => {
     if (!canvasRef.current) return;
@@ -166,6 +168,101 @@ function CanvasWrapper() {
     contentState.strokeColor,
     contentState.fillShape,
   ]);
+
+  useEffect(() => {
+    if (!fabricRef.current) return;
+
+    const canvas = fabricRef.current;
+
+    const handleObjectSelected = () => {
+      const activeObject = canvas.getActiveObject();
+      if (activeObject) {
+        setContentState((prev) => ({
+          ...prev,
+          selectedObject: {
+            top: activeObject.top,
+            left: activeObject.left,
+            width: activeObject.width,
+            height: activeObject.height,
+          },
+        }));
+      }
+      console.log("ffffffffffffffffffffffffffff");
+    };
+    const handleObjectMoving = (e) => {
+      const activeObject = e.target;
+      if (activeObject) {
+        const canvasWidth = canvas.width;
+        const canvasHeight = canvas.height;
+        const centerX = activeObject.left + activeObject.width / 2;
+        const centerY = activeObject.top + activeObject.height / 2;
+
+        if (!horizontalGuideRef.current) {
+          horizontalGuideRef.current = new Line(
+            [0, centerY, canvasWidth, centerY],
+            {
+              stroke: "red",
+              strokeWidth: 1,
+              strokeDashArray: [10, 5, 2, 5],
+              selectable: false,
+              evented: false,
+            }
+          );
+          canvas.add(horizontalGuideRef.current);
+        } else {
+          horizontalGuideRef.current.set({
+            y1: centerY,
+            y2: centerY,
+          });
+        }
+
+        if (!verticalGuideRef.current) {
+          verticalGuideRef.current = new Line(
+            [centerX, 0, centerX, canvasHeight],
+            {
+              stroke: "red",
+              strokeWidth: 1,
+              strokeDashArray: [10, 5, 2, 5],
+              selectable: false,
+              evented: false,
+            }
+          );
+          canvas.add(verticalGuideRef.current);
+        } else {
+          verticalGuideRef.current.set({
+            x1: centerX,
+            x2: centerX,
+          });
+        }
+
+        canvas.renderAll();
+      }
+    };
+
+    const handleObjectModified = () => {
+      if (horizontalGuideRef.current) {
+        canvas.remove(horizontalGuideRef.current);
+        horizontalGuideRef.current = null;
+      }
+      if (verticalGuideRef.current) {
+        canvas.remove(verticalGuideRef.current);
+        verticalGuideRef.current = null;
+      }
+      canvas.renderAll();
+    };
+
+    canvas.on("selection:cleared", handleObjectSelected);
+    canvas.on("selection:updated", handleObjectSelected);
+    canvas.on("object:moving", handleObjectMoving);
+    canvas.on("object:modified", handleObjectModified);
+
+    return () => {
+      canvas.off("selection:cleared", handleObjectSelected);
+      canvas.off("selection:updated", handleObjectSelected);
+      canvas.off("object:moving", handleObjectMoving);
+      canvas.off("object:modified", handleObjectModified);
+    };
+  }, [contentState]);
 
   return (
     <div>

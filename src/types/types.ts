@@ -20,6 +20,12 @@ export interface ContentState {
   undoStack: string[];
   redoStack: string[];
   name: number;
+  selectedObject?: {
+    top: number;
+    left: number;
+    width: number;
+    height: number;
+  };
 }
 
 export interface CanvasContextProps {
