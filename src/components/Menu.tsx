@@ -1,22 +1,16 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   FaCircle,
-  FaExpand,
-  FaRedo,
-  FaSearchMinus,
-  FaSearchPlus,
+  FaLink,
   FaSquare,
-  FaStop,
   FaTextHeight,
-  FaUndo,
-  FaVideo,
+  FaUpload,
 } from "react-icons/fa";
 import { FiTriangle } from "react-icons/fi";
 import { RiApps2AddLine } from "react-icons/ri";
 import { FaPencil } from "react-icons/fa6";
 import DrawMenu from "./DrawMenu";
 import { Image, Point, TEvent } from "fabric";
-import useCanvasRecorder from "../hooks/useCanvasRecorder";
 import { useContextCanvas } from "../hooks/useContextCanvas";
 
 function Menu() {
@@ -25,111 +19,6 @@ function Menu() {
   const [selectedColor] = useState("red");
   const [isFillShape, setFillShape] = useState<boolean>(true);
   const [strokeWidth, setStrokeWidth] = useState<number>(1);
-  const { startRecording, stopRecording, recording, videoURL } =
-    useCanvasRecorder();
-
-  const history = useRef<string[]>([]);
-  const [currentStateIndex, setCurrentStateIndex] = useState<number>(0);
-
-  let isUndoing = false;
-
-  const saveState = () => {
-    if (isUndoing) return; // Prevent saving state during undo
-    const canvas = contentState.canvas;
-    if (canvas) {
-      const canvasState = JSON.stringify(canvas.toJSON());
-      console.log("Saving state:", canvasState);
-      setContentState((prev) => ({
-        ...prev,
-        undoStack: [...prev.undoStack, canvasState],
-        redoStack: [], // Clear redo stack on new action
-      }));
-    }
-  };
-
-  const undo = () => {
-    const canvas = contentState.canvas;
-    if (!canvas) return;
-
-    const undoStack = [...contentState.undoStack];
-    const redoStack = [...contentState.redoStack];
-
-    console.log("Before undo:", { undoStack, redoStack });
-
-    if (undoStack.length > 0) {
-      const lastItem = undoStack.pop(); // Remove the last state from the undo stack
-      if (lastItem) {
-        redoStack.push(lastItem); // Add it to the redo stack
-      }
-
-      const penultimateItem = undoStack[undoStack.length - 1];
-
-      canvas.clear(); // Clear the canvas
-
-      if (penultimateItem) {
-        isUndoing = true; // Set the flag to prevent saving states
-        canvas.loadFromJSON(penultimateItem, () => {
-          canvas.discardActiveObject();
-          canvas.renderAll(); // Render with the loaded state
-          isUndoing = false; // Reset the flag after loading
-        });
-      } else {
-        // If no penultimate state exists, clear the canvas
-        canvas.renderAll();
-      }
-
-      // Update the content state
-      setContentState((prev) => ({
-        ...prev,
-        undoStack,
-        redoStack,
-      }));
-
-      console.log("After undo:", { undoStack, redoStack });
-    } else {
-      console.log("No states to undo.");
-    }
-  };
-  const redo = () => {
-    const canvas = contentState.canvas;
-    if (!canvas) return;
-
-    const undoStack = [...contentState.undoStack];
-    const redoStack = [...contentState.redoStack];
-
-    console.log("Before redo:", { undoStack, redoStack });
-
-    if (redoStack.length > 0) {
-      const lastRedoItem = redoStack.pop(); // Remove the last state from the redo stack
-      if (lastRedoItem) {
-        undoStack.push(lastRedoItem); // Add it back to the undo stack
-      }
-
-      canvas.clear(); // Clear the canvas
-
-      // Load the state from the last redo item
-      if (lastRedoItem) {
-        canvas.loadFromJSON(lastRedoItem, () => {
-          canvas.discardActiveObject();
-          canvas.renderAll(); // Render with the loaded state
-        });
-      } else {
-        // If no state exists in the redo stack, just render an empty canvas
-        canvas.renderAll();
-      }
-
-      // Update the content state
-      setContentState((prev) => ({
-        ...prev,
-        undoStack,
-        redoStack,
-      }));
-
-      console.log("After redo:", { undoStack, redoStack });
-    } else {
-      console.log("No states to redo.");
-    }
-  };
 
   const handleShapeBtn = (type: string) => {
     setContentState((prev) => ({
@@ -190,20 +79,6 @@ function Menu() {
   //   console.log("Ali");
   // };
 
-  const handleExport = () => {
-    if (contentState.canvas) {
-      const dataURL = contentState.canvas.toDataURL({
-        format: "png",
-        quality: 1.0,
-        multiplier: 1,
-      });
-      const link = document.createElement("a");
-      link.href = dataURL;
-      link.download = "canvas.png";
-      link.click();
-    }
-  };
-
   // const handleEraserBtn = (
   //   event: React.MouseEvent<HTMLButtonElement>,
   //   tool: string
@@ -241,46 +116,6 @@ function Menu() {
     }));
   };
 
-  const handleZoomOut = () => {
-    const canvas = contentState.canvas;
-    if (!canvas) return;
-    const zoom = canvas.getZoom();
-    canvas.setZoom(zoom / 1.1);
-  };
-
-  const handleZoomIn = () => {
-    const canvas = contentState.canvas;
-    if (!canvas) return;
-    const zoom = canvas.getZoom();
-    canvas.setZoom(zoom * 1.1);
-  };
-
-  const handleFit = () => {
-    const canvas = contentState.canvas;
-    if (canvas) {
-      const objects = canvas.getObjects();
-      if (objects.length > 0) {
-        const boundingRect = canvas.getActiveObject()?.getBoundingRect() || {
-          width: canvas.width,
-          height: canvas.height,
-        };
-        const scaleX = canvas.width / boundingRect.width;
-        const scaleY = canvas.height / boundingRect.height;
-        const scale = Math.min(scaleX, scaleY);
-        canvas.setZoom(scale);
-        canvas.viewportTransform = [scale, 0, 0, scale, 0, 0];
-        canvas.renderAll();
-      }
-    }
-  };
-
-  const handleResetZoom = () => {
-    const canvas = contentState.canvas;
-    if (!canvas) return;
-    canvas.setZoom(1);
-    canvas.viewportTransform = [1, 0, 0, 1, 0, 0];
-    canvas.renderAll();
-  };
   const handleMouseWheel = (opt: TEvent<WheelEvent>) => {
     const canvas = contentState.canvas;
     if (!canvas) return;
@@ -355,29 +190,6 @@ function Menu() {
     };
   }, [contentState]);
 
-  useEffect(() => {
-    const canvas = contentState.canvas;
-    if (canvas) {
-      canvas.on("object:added", saveState);
-      canvas.on("object:modified", saveState);
-      canvas.on("object:removed", saveState);
-    }
-
-    return () => {
-      if (canvas) {
-        canvas.off("object:added", saveState);
-        canvas.off("object:modified", saveState);
-        canvas.off("object:removed", saveState);
-      }
-    };
-  }, [contentState.canvas]);
-
-  useEffect(() => {
-    console.log(contentState);
-  }, [contentState]);
-  useEffect(() => {
-    console.log("currentStateIndex:", currentStateIndex);
-  }, [currentStateIndex]);
   return (
     <div className="h-screen bg-gray-800 text-white flex flex-col items-center p-4 z-100 shadow-lg relative">
       <div
@@ -478,78 +290,8 @@ function Menu() {
         <span className="text-base mb-6">Elements</span>
       </div>
       <div className="flex flex-col items-center gap-4 mt-6">
-        <button
-          className="text-base py-2 px-1 rounded cursor-pointer bg-blue-500 hover:bg-blue-700 text-white"
-          onClick={handleZoomIn}
-        >
-          <FaSearchPlus />
-        </button>
-        <button
-          className="text-base py-2 px-1 rounded cursor-pointer bg-blue-500 hover:bg-blue-700 text-white"
-          onClick={handleZoomOut}
-        >
-          <FaSearchMinus />
-        </button>
-        <button
-          className="text-base py-2 px-1 rounded cursor-pointer bg-blue-500 hover:bg-blue-700 text-white"
-          onClick={handleFit}
-        >
-          <FaExpand />
-        </button>
-        <button
-          className="text-base py-2 px-1 rounded cursor-pointer bg-blue-500 hover:bg-blue-700 text-white"
-          onClick={handleResetZoom}
-        >
-          <FaUndo />
-        </button>
-        <button
-          className="text-base py-2 px-1 rounded cursor-pointer bg-blue-500 hover:bg-blue-700 text-white"
-          onClick={undo}
-        >
-          <FaUndo />
-        </button>
-        <button
-          className="text-base py-2 px-1 rounded cursor-pointer bg-blue-500 hover:bg-blue-700 text-white"
-          onClick={redo}
-        >
-          <FaRedo />
-        </button>
-      </div>
-      <button
-        className="text-base py-2 px-1 mt-6 rounded cursor-pointer bg-blue-500 hover:bg-blue-700 text-white"
-        onClick={handleExport}
-      >
-        Export as Image
-      </button>
-      <div className="flex flex-col items-center gap-4 mt-6">
-        {recording ? (
-          <button
-            className="text-base py-2 px-1 rounded cursor-pointer bg-red-500 hover:bg-red-700 text-white"
-            onClick={stopRecording}
-          >
-            <FaStop />
-          </button>
-        ) : (
-          <button
-            className="text-base py-2 px-1 rounded cursor-pointer bg-green-500 hover:bg-green-700 text-white"
-            onClick={startRecording}
-          >
-            <FaVideo />
-          </button>
-        )}
-        {videoURL && (
-          <a
-            href={videoURL}
-            download="canvas-recording.webm"
-            className="text-base py-2 px-1 rounded cursor-pointer bg-blue-500 hover:bg-blue-700 text-white"
-          >
-            Download Video
-          </a>
-        )}
-      </div>
-      <div className="flex flex-col items-center gap-4 mt-6">
         <label htmlFor="fileInput" className="text-base mb-2">
-          Upload Image:
+          <FaUpload className="mr-2 w-9 h-9" />
         </label>
         <input
           type="file"
@@ -559,13 +301,14 @@ function Menu() {
           className="text-sm mb-4"
         />
         <label htmlFor="urlInput" className="text-base mb-2">
-          Image URL:
+          <FaLink className="mr-2 w-9 h-9" />
         </label>
         <input
           type="text"
           id="urlInput"
           onChange={handleUrlChange}
-          className="text-base mb-4"
+          className="text-base mb-4 bg-white w-1/2 text-black"
+          placeholder="image URL"
         />
       </div>
     </div>
