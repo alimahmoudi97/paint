@@ -113,6 +113,8 @@ export const Shape = ({ canvas, contentState, setContentState }: BaseProps) => {
   return {
     removeEventListener: function () {
       canvas.off("mouse:down", onMouseDown);
+      canvas.on("mouse:move", onMouseMove);
+      canvas.on("mouse:up", onMouseUp);
     },
   };
 };

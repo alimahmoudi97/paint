@@ -25,10 +25,10 @@ function Menu() {
       ...prev,
       type,
       tool: "shape",
-      colorShape: selectedColor,
+      // colorShape: selectedColor,
       strokeWidth,
       fillShape: isFillShape,
-      strokeColor: selectedColor,
+      // strokeColor: selectedColor,
     }));
     setSelectedShape(type);
   };
@@ -171,11 +171,11 @@ function Menu() {
       if (contentState.tool === "eraser") return;
       const activeObject = canvas?.getActiveObject();
       if (activeObject) {
-        activeObject.set({
-          fill: isFillShape ? selectedColor : "transparent",
-          stroke: selectedColor,
-          strokeWidth,
-        });
+        // activeObject.set({
+        //   fill: isFillShape ? selectedColor : "transparent",
+        //   stroke: selectedColor,
+        //   strokeWidth,
+        // });
 
         canvas?.renderAll();
       }

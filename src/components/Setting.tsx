@@ -50,8 +50,33 @@ function Setting() {
     }
   };
 
+  const handlePropertyChange = (property: string, value: any) => {
+    const canvas = contentState.canvas;
+    if (!canvas) return;
+
+    const activeObject = canvas.getActiveObject();
+
+    if (activeObject) {
+      activeObject.set(property, value);
+      activeObject.setCoords();
+      canvas.renderAll();
+      if (property === "fill") {
+        setContentState((prev) => ({
+          ...prev,
+          selectedObject: activeObject,
+          colorShape: value,
+        }));
+      } else {
+        setContentState((prev) => ({
+          ...prev,
+          selectedObject: activeObject,
+        }));
+      }
+    }
+  };
+
   useEffect(() => {
-    console.log("active object:", contentState.selectedObject);
+    console.log("active object:", contentState);
   }, [contentState]);
 
   return (
@@ -85,6 +110,45 @@ function Setting() {
               <span className="bg-gray-600 w-24 p-2">
                 {contentState.selectedObject.height.toFixed(2)}
               </span>
+            </div>
+          </div>
+          <div className="flex flex-col items-center justify-evenly mt-2">
+            <div className="flex flex-col gap-2">
+              <span>Stroke Width</span>
+              <input
+                type="number"
+                className="bg-gray-600 w-24 p-2"
+                value={contentState.selectedObject.strokeWidth || 1}
+                onChange={(e) =>
+                  handlePropertyChange("strokeWidth", e.target.value)
+                }
+              />
+            </div>
+            <div className="flex flex-col gap-2">
+              <span>Fill Color</span>
+              <input
+                type="color"
+                className="bg-gray-600 w-24 p-2"
+                value={
+                  typeof contentState.selectedObject.fill === "string"
+                    ? contentState.selectedObject.fill
+                    : "#000000"
+                }
+                onChange={(e) => handlePropertyChange("fill", e.target.value)}
+              />
+            </div>
+            <div className="flex flex-col gap-2">
+              <span>Stroke Color</span>
+              <input
+                type="color"
+                className="bg-gray-600 w-24 p-2"
+                value={
+                  typeof contentState.selectedObject.stroke === "string"
+                    ? contentState.selectedObject.stroke
+                    : "#000000"
+                }
+                onChange={(e) => handlePropertyChange("stroke", e.target.value)}
+              />
             </div>
           </div>
           <div className="flex flex-col items-center mt-4">
