@@ -150,6 +150,20 @@ function Setting() {
                 onChange={(e) => handlePropertyChange("stroke", e.target.value)}
               />
             </div>
+            <div className="flex flex-col gap-2">
+              <span>Fill Shape</span>
+              <input
+                type="checkbox"
+                className="bg-gray-600 w-24 p-2"
+                checked={contentState.fillShape || false}
+                onChange={(e) =>
+                  setContentState((prev) => ({
+                    ...prev,
+                    fillShape: e.target.checked,
+                  }))
+                }
+              />
+            </div>
           </div>
           <div className="flex flex-col items-center mt-4">
             <h3 className="text-xl mb-2">Align Object</h3>
