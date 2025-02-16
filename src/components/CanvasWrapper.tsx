@@ -116,11 +116,11 @@ function CanvasWrapper() {
       setContentState,
     });
 
-    const eraserEventListener = EraserTool({
-      canvas: fabricRef.current,
-      contentState,
-      setContentState,
-    });
+    // const eraserEventListener = EraserTool({
+    //   canvas: fabricRef.current,
+    //   contentState,
+    //   setContentState,
+    // });
 
     const textEventListener = TextTool({
       canvas: fabricRef.current,
@@ -136,7 +136,7 @@ function CanvasWrapper() {
 
     return () => {
       shapeEventListener.removeEventListener();
-      eraserEventListener.removeEventListener();
+      // eraserEventListener.removeEventListener();
       textEventListener.textEventListener();
       penEventListener.removeEventListeners();
     };

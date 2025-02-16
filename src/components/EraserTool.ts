@@ -115,5 +115,6 @@ export const EraserTool = ({
       canvas.off("mouse:move", onMouseMove);
       canvas.off("mouse:up", onMouseUp);
     },
+    onMouseUp,
   };
 };
