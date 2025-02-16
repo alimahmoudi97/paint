@@ -1,4 +1,4 @@
-import { Canvas } from "fabric";
+import { Canvas, FabricObject } from "fabric";
 
 export interface BaseProps {
   canvas: Canvas;
@@ -20,12 +20,7 @@ export interface ContentState {
   undoStack: string[];
   redoStack: string[];
   name: number;
-  selectedObject?: {
-    top: number;
-    left: number;
-    width: number;
-    height: number;
-  };
+  selectedObject?: FabricObject;
 }
 
 export interface CanvasContextProps {

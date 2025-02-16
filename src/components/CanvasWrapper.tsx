@@ -186,12 +186,7 @@ function CanvasWrapper() {
       if (activeObject) {
         setContentState((prev) => ({
           ...prev,
-          selectedObject: {
-            top: activeObject.top,
-            left: activeObject.left,
-            width: activeObject.width,
-            height: activeObject.height,
-          },
+          selectedObject: activeObject,
         }));
         setToolbarPosition({
           top: activeObject.top,
@@ -251,12 +246,7 @@ function CanvasWrapper() {
         }
         setContentState((prev) => ({
           ...prev,
-          selectedObject: {
-            top: activeObject.top,
-            left: activeObject.left,
-            width: activeObject.width,
-            height: activeObject.height,
-          },
+          selectedObject: activeObject,
         }));
 
         setToolbarPosition({

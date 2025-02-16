@@ -45,12 +45,7 @@ function Setting() {
       canvas.renderAll();
       setContentState((prev) => ({
         ...prev,
-        selectedObject: {
-          top: activeObject.top,
-          left: activeObject.left,
-          width: activeObject.width,
-          height: activeObject.height,
-        },
+        selectedObject: activeObject,
       }));
     }
   };
