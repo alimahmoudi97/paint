@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useContextCanvas } from "../hooks/useContextCanvas";
 import {
   BsAlignBottom,
@@ -53,6 +54,10 @@ function Setting() {
       }));
     }
   };
+
+  useEffect(() => {
+    console.log("active object:", contentState.selectedObject);
+  }, [contentState]);
 
   return (
     <div className="h-screen bg-gray-800 text-white w-full flex flex-col px-2 py-4 z-100 shadow-lg relative">

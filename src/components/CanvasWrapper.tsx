@@ -1,11 +1,12 @@
 import { Canvas, Circle, Line } from "fabric";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { Shape } from "./Shapes";
 import PenTool from "./PenTool";
 import { EraserTool } from "./EraserTool";
 import { TextTool } from "./TextTool";
 import { useContextCanvas } from "../hooks/useContextCanvas";
+import Toolbar from "./Toolbar";
 
 const CELL_SIZE = 30;
 
@@ -20,6 +21,12 @@ function CanvasWrapper() {
   const cursorCircleRef = useRef<Circle | null>(null);
   const horizontalGuideRef = useRef<Line | null>(null);
   const verticalGuideRef = useRef<Line | null>(null);
+  const [toolbarPosition, setToolbarPosition] = useState<{
+    top: number;
+    left: number;
+    width: number;
+    height: number;
+  } | null>(null);
 
   useEffect(() => {
     if (!canvasRef.current) return;
@@ -186,9 +193,17 @@ function CanvasWrapper() {
             height: activeObject.height,
           },
         }));
+        setToolbarPosition({
+          top: activeObject.top,
+          left: activeObject.left,
+          width: activeObject.width,
+          height: activeObject.height,
+        });
+      } else {
+        setToolbarPosition(null);
       }
-      console.log("ffffffffffffffffffffffffffff");
     };
+
     const handleObjectMoving = (e) => {
       const activeObject = e.target;
       if (activeObject) {
@@ -234,6 +249,22 @@ function CanvasWrapper() {
             x2: centerX,
           });
         }
+        setContentState((prev) => ({
+          ...prev,
+          selectedObject: {
+            top: activeObject.top,
+            left: activeObject.left,
+            width: activeObject.width,
+            height: activeObject.height,
+          },
+        }));
+
+        setToolbarPosition({
+          top: activeObject.top,
+          left: activeObject.left,
+          width: activeObject.width,
+          height: activeObject.height,
+        });
 
         canvas.renderAll();
       }
@@ -265,8 +296,16 @@ function CanvasWrapper() {
   }, [contentState]);
 
   return (
-    <div>
+    <div className="relative">
       <canvas ref={canvasRef} id="canvas" className="border border-amber-300" />
+      {toolbarPosition && (
+        <Toolbar
+          top={toolbarPosition.top}
+          left={toolbarPosition.left}
+          width={toolbarPosition.width}
+          height={toolbarPosition.height}
+        />
+      )}
     </div>
   );
 }
