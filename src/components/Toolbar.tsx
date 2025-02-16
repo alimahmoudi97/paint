@@ -44,6 +44,34 @@ const Toolbar: React.FC<ToolbarProps> = ({ top, left, width, height }) => {
     canvas.renderAll();
   };
 
+  const handleDuplicateClick = async () => {
+    const canvas = contentState.canvas;
+    if (!canvas) return;
+
+    const activeObject = canvas.getActiveObject();
+
+    if (activeObject) {
+      const cloned = await activeObject.clone();
+      canvas.discardActiveObject();
+      cloned.set({
+        left: activeObject.left + 10,
+        top: activeObject.top + 10,
+        evented: true,
+      });
+      // if (cloned.type === "activeSelection") {
+      //   cloned.canvas = canvas;
+      //   cloned.forEachObject((object) => {
+      //     canvas.add(object);
+      //   });
+
+      // }
+      cloned.setCoords();
+      canvas.add(cloned);
+      canvas.setActiveObject(cloned);
+      canvas.requestRenderAll();
+    }
+  };
+
   useEffect(() => {
     if (contentState.canvas) {
       const eraserEventListener = EraserTool({
@@ -64,8 +92,11 @@ const Toolbar: React.FC<ToolbarProps> = ({ top, left, width, height }) => {
           Delete
         </span>
       </button>
-      <button className="toolbar-button">Duplicate</button>
-      <button className="toolbar-button">Edit</button>
+      <button className="toolbar-button" onClick={handleDuplicateClick}>
+        <span aria-hidden="true" style={{ color: "rgb(5, 113, 211)" }}>
+          Duplicate
+        </span>
+      </button>
     </div>
   );
 };
