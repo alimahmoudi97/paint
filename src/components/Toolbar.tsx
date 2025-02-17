@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import { useContextCanvas } from "../hooks/useContextCanvas";
 import { EraserTool } from "./EraserTool";
-import { Group } from "fabric";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import { IoDuplicateOutline } from "react-icons/io5";
 
@@ -12,7 +11,7 @@ interface ToolbarProps {
   height: number;
 }
 
-const Toolbar: React.FC<ToolbarProps> = ({ top, left, width, height }) => {
+const Toolbar: React.FC<ToolbarProps> = ({ top, left, width }) => {
   const { contentState, setContentState } = useContextCanvas();
 
   const toolbarStyle: React.CSSProperties = {

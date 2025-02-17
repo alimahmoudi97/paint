@@ -50,7 +50,10 @@ function Setting() {
     }
   };
 
-  const handlePropertyChange = (property: string, value: any) => {
+  const handlePropertyChange = (
+    property: string,
+    value: string | number | boolean
+  ) => {
     const canvas = contentState.canvas;
     if (!canvas) return;
 
@@ -64,7 +67,7 @@ function Setting() {
         setContentState((prev) => ({
           ...prev,
           selectedObject: activeObject,
-          colorShape: value,
+          colorShape: value as string,
         }));
       } else {
         setContentState((prev) => ({

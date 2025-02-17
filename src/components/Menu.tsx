@@ -16,7 +16,6 @@ import { useContextCanvas } from "../hooks/useContextCanvas";
 function Menu() {
   const { contentState, setContentState } = useContextCanvas();
   const [selectedShape, setSelectedShape] = useState("");
-  const [selectedColor] = useState("red");
   const [isFillShape, setFillShape] = useState<boolean>(true);
   const [strokeWidth, setStrokeWidth] = useState<number>(1);
 

@@ -1,9 +1,7 @@
-import { Canvas, Circle, Line } from "fabric";
+import { Canvas, Circle, Line, TPointerEventInfo } from "fabric";
 import { useEffect, useRef, useState } from "react";
-
 import { Shape } from "./Shapes";
 import PenTool from "./PenTool";
-import { EraserTool } from "./EraserTool";
 import { TextTool } from "./TextTool";
 import { useContextCanvas } from "../hooks/useContextCanvas";
 import Toolbar from "./Toolbar";
@@ -199,7 +197,7 @@ function CanvasWrapper() {
       }
     };
 
-    const handleObjectMoving = (e) => {
+    const handleObjectMoving = (e: TPointerEventInfo) => {
       const activeObject = e.target;
       if (activeObject) {
         const canvasWidth = canvas.width;
