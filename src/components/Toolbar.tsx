@@ -2,6 +2,8 @@ import React, { useEffect } from "react";
 import { useContextCanvas } from "../hooks/useContextCanvas";
 import { EraserTool } from "./EraserTool";
 import { Group } from "fabric";
+import { RiDeleteBin5Line } from "react-icons/ri";
+import { IoDuplicateOutline } from "react-icons/io5";
 
 interface ToolbarProps {
   top: number;
@@ -23,7 +25,7 @@ const Toolbar: React.FC<ToolbarProps> = ({ top, left, width, height }) => {
     borderRadius: "5px",
     boxShadow: "0 2px 5px rgba(0, 0, 0, 0.2)",
     zIndex: 1000000,
-    background: "red",
+    background: "white",
   };
 
   const handleDeleteClick = () => {
@@ -86,15 +88,15 @@ const Toolbar: React.FC<ToolbarProps> = ({ top, left, width, height }) => {
   }, [contentState]);
 
   return (
-    <div style={toolbarStyle}>
+    <div style={toolbarStyle} className="flex gap-2">
       <button className="toolbar-button" onClick={handleDeleteClick}>
         <span aria-hidden="true" style={{ color: "rgb(5, 113, 211)" }}>
-          Delete
+          <RiDeleteBin5Line className="w-6 h-6" />
         </span>
       </button>
       <button className="toolbar-button" onClick={handleDuplicateClick}>
         <span aria-hidden="true" style={{ color: "rgb(5, 113, 211)" }}>
-          Duplicate
+          <IoDuplicateOutline className="w-6 h-6" />
         </span>
       </button>
     </div>
