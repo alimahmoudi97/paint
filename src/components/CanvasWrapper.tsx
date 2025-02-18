@@ -1,4 +1,4 @@
-import { Canvas, Circle, Line, TPointerEventInfo } from "fabric";
+import { Canvas, Circle, FabricObject, Line } from "fabric";
 import { useEffect, useRef, useState } from "react";
 import { Shape } from "./Shapes";
 import PenTool from "./PenTool";
@@ -197,13 +197,17 @@ function CanvasWrapper() {
       }
     };
 
-    const handleObjectMoving = (e: TPointerEventInfo) => {
+    interface HandleObjectMovingEvent {
+      target: FabricObject;
+    }
+
+    const handleObjectMoving = (e: HandleObjectMovingEvent) => {
       const activeObject = e.target;
       if (activeObject) {
-        const canvasWidth = canvas.width;
-        const canvasHeight = canvas.height;
-        const centerX = activeObject.left + activeObject.width / 2;
-        const centerY = activeObject.top + activeObject.height / 2;
+        const canvasWidth = canvas.width!;
+        const canvasHeight = canvas.height!;
+        const centerX = activeObject.left! + activeObject.width! / 2;
+        const centerY = activeObject.top! + activeObject.height! / 2;
 
         if (!horizontalGuideRef.current) {
           horizontalGuideRef.current = new Line(
@@ -248,10 +252,10 @@ function CanvasWrapper() {
         }));
 
         setToolbarPosition({
-          top: activeObject.top,
-          left: activeObject.left,
-          width: activeObject.width,
-          height: activeObject.height,
+          top: activeObject.top!,
+          left: activeObject.left!,
+          width: activeObject.width!,
+          height: activeObject.height!,
         });
 
         canvas.renderAll();

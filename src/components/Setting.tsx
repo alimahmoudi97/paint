@@ -8,6 +8,7 @@ import {
   BsAlignStart,
   BsAlignTop,
 } from "react-icons/bs";
+import Layers from "./Layers";
 
 function Setting() {
   const { contentState, setContentState } = useContextCanvas();
@@ -215,6 +216,7 @@ function Setting() {
       ) : (
         <p>No object selected</p>
       )}
+      <Layers />
     </div>
   );
 }
