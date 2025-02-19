@@ -1,5 +1,5 @@
 import { useContextCanvas } from "../hooks/useContextCanvas";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import {
   FaExpand,
   FaRedo,
@@ -16,14 +16,13 @@ function Header() {
   const { startRecording, stopRecording, recording, videoURL } =
     useCanvasRecorder();
 
-  let isUndoing = false;
+  const isUndoingRef = useRef(false);
 
   const saveState = () => {
-    if (isUndoing) return; // Prevent saving state during undo
+    if (isUndoingRef.current) return; // Prevent saving state during undo
     const canvas = contentState.canvas;
     if (canvas) {
       const canvasState = JSON.stringify(canvas.toJSON());
-      console.log("Saving state:", canvasState);
       setContentState((prev) => ({
         ...prev,
         undoStack: [...prev.undoStack, canvasState],
@@ -39,8 +38,6 @@ function Header() {
     const undoStack = [...contentState.undoStack];
     const redoStack = [...contentState.redoStack];
 
-    console.log("Before undo:", { undoStack, redoStack });
-
     if (undoStack.length > 0) {
       const lastItem = undoStack.pop(); // Remove the last state from the undo stack
       if (lastItem) {
@@ -49,17 +46,16 @@ function Header() {
 
       const penultimateItem = undoStack[undoStack.length - 1];
 
-      canvas.clear(); // Clear the canvas
+      canvas.clear();
 
       if (penultimateItem) {
-        isUndoing = true; // Set the flag to prevent saving states
-        canvas.loadFromJSON(penultimateItem, () => {
+        isUndoingRef.current = true;
+        canvas.loadFromJSON(penultimateItem).then((canvas) => {
           canvas.discardActiveObject();
-          canvas.renderAll(); // Render with the loaded state
-          isUndoing = false; // Reset the flag after loading
+          canvas.renderAll();
+          isUndoingRef.current = false;
         });
       } else {
-        // If no penultimate state exists, clear the canvas
         canvas.renderAll();
       }
 
@@ -69,12 +65,11 @@ function Header() {
         undoStack,
         redoStack,
       }));
-
-      console.log("After undo:", { undoStack, redoStack });
     } else {
       console.log("No states to undo.");
     }
   };
+
   const redo = () => {
     const canvas = contentState.canvas;
     if (!canvas) return;
@@ -82,21 +77,21 @@ function Header() {
     const undoStack = [...contentState.undoStack];
     const redoStack = [...contentState.redoStack];
 
-    console.log("Before redo:", { undoStack, redoStack });
-
     if (redoStack.length > 0) {
       const lastRedoItem = redoStack.pop(); // Remove the last state from the redo stack
       if (lastRedoItem) {
         undoStack.push(lastRedoItem); // Add it back to the undo stack
       }
 
-      canvas.clear(); // Clear the canvas
+      canvas.clear();
 
       // Load the state from the last redo item
       if (lastRedoItem) {
-        canvas.loadFromJSON(lastRedoItem, () => {
+        isUndoingRef.current = true;
+        canvas.loadFromJSON(lastRedoItem).then((canvas) => {
           canvas.discardActiveObject();
           canvas.renderAll(); // Render with the loaded state
+          isUndoingRef.current = false;
         });
       } else {
         // If no state exists in the redo stack, just render an empty canvas
@@ -109,8 +104,6 @@ function Header() {
         undoStack,
         redoStack,
       }));
-
-      console.log("After redo:", { undoStack, redoStack });
     } else {
       console.log("No states to redo.");
     }
