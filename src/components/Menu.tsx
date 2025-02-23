@@ -12,6 +12,8 @@ import { FaPencil } from "react-icons/fa6";
 import DrawMenu from "./DrawMenu";
 import { Image, Point, TEvent } from "fabric";
 import { useContextCanvas } from "../hooks/useContextCanvas";
+import Modal from "./Modal";
+import { LuImport } from "react-icons/lu";
 
 function Menu() {
   const { contentState, setContentState } = useContextCanvas();
@@ -128,29 +130,6 @@ function Menu() {
     opt.e.stopPropagation();
   };
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = async (e) => {
-        const dataUrl = e.target?.result as string;
-        const image = await Image.fromURL(dataUrl);
-        contentState.canvas?.add(image);
-        contentState.canvas?.renderAll();
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const handleUrlChange = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const url = event.target.value;
-    const image = await Image.fromURL(url);
-    contentState.canvas?.add(image);
-    contentState.canvas?.renderAll();
-  };
-
   useEffect(() => {
     const canvas = contentState.canvas;
     if (canvas) {
@@ -190,7 +169,7 @@ function Menu() {
   }, [contentState]);
 
   return (
-    <div className="h-screen flex flex-col items-center p-4 z-100 shadow-lg relative">
+    <div className="h-screen flex flex-col items-center p-4 gap-2 z-100 shadow-lg relative">
       <div
         className={`flex flex-col items-center justify-center p-1 cursor-pointer w-16 h-16 rounded-full bg-gray-100
         ${contentState.expandElementsMenu ? "text-green-500" : ""}`}
@@ -290,27 +269,22 @@ function Menu() {
         />
         <span className="text-xs">Text</span>
       </div>
-      <div className="flex flex-col items-center gap-4 mt-6">
-        <label htmlFor="fileInput" className="text-xs mb-2">
-          <FaUpload className="mr-2 w-6 h-6" />
-        </label>
-        <input
-          type="file"
-          id="fileInput"
-          accept="image/*"
-          onChange={handleFileChange}
-          className="text-xs mb-4"
+      <div
+        className={`flex flex-col items-center justify-center w-16 h-16 rounded-full bg-gray-100
+            ${contentState.tool === "import" ? "text-green-600" : ""}`}
+      >
+        <LuImport
+          className="w-6 h-6"
+          onClick={(event) => {
+            handleTextBtn(event, "import");
+            setContentState((prev) => ({
+              ...prev,
+              showModal: !contentState.showModal,
+            }));
+          }}
         />
-        <label htmlFor="urlInput" className="text-base mb-2">
-          <FaLink className="mr-2 w-6 h-6" />
-        </label>
-        <input
-          type="text"
-          id="urlInput"
-          onChange={handleUrlChange}
-          className="text-sx mb-4 bg-white w-1/2 text-black"
-          placeholder="image URL"
-        />
+        <span className="text-xs">Import</span>
+        <Modal />
       </div>
     </div>
   );

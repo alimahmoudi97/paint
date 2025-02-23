@@ -20,6 +20,7 @@ function ContextProvider({ children }: { children: ReactNode }) {
     undoStack: [],
     redoStack: [],
     name: 0,
+    showModal: false,
   });
   const contentStateRef = useRef<ContentState | null>(null);
 

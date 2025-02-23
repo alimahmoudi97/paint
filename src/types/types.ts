@@ -21,6 +21,7 @@ export interface ContentState {
   redoStack: string[];
   name: number;
   selectedObject?: FabricObject;
+  showModal: boolean;
 }
 
 export interface CanvasContextProps {
