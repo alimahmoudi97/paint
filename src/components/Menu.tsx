@@ -190,19 +190,20 @@ function Menu() {
   }, [contentState]);
 
   return (
-    <div className="h-screen bg-gray-800 text-white flex flex-col items-center p-4 z-100 shadow-lg relative">
+    <div className="h-screen flex flex-col items-center p-4 z-100 shadow-lg relative">
       <div
-        className="flex flex-col items-center cursor-pointer"
+        className={`flex flex-col items-center justify-center p-1 cursor-pointer w-16 h-16 rounded-full bg-gray-100
+        ${contentState.expandElementsMenu ? "text-green-500" : ""}`}
         onClick={handleElements}
       >
-        <RiApps2AddLine className="w-9 h-9" />
-        <span className="text-base mb-6">Elements</span>
+        <RiApps2AddLine className="w-8 h-8" />
+        <span className="text-xs">Elements</span>
       </div>
       <div
-        className={`absolute left-40 top-0 bottom-0 w-90 z-999999 border rounded-br-2xl
-           rounded-tr-2xl bg-white transition-all duration-200 ease-in-out
-           shadow shadow-blue-500
-           flex flex-col items-center
+        className={`absolute left-40 top-0  w-90 z-999999 rounded-br
+           rounded-tr bg-white transition-all duration-200 ease-in-out
+           shadow shadow-gray-400
+           flex flex-col pb-8
             ${
               contentState.expandElementsMenu
                 ? "opacity-100 visible"
@@ -213,64 +214,62 @@ function Menu() {
         <div className="flex flex-wrap gap-4 w-full">
           <button
             className={`py-2 px-4 rounded cursor-pointer ${
-              selectedShape === "rectangle" ? "bg-green-500" : "bg-gray-700"
+              selectedShape === "rectangle" ? "bg-green-500" : ""
             } hover:bg-green-500 text-white`}
             id="rectangle"
             onClick={() => handleShapeBtn("rectangle")}
           >
-            <FaSquare />
+            <FaSquare
+              className={`w-6 h-6 ${
+                selectedShape === "rectangle" ? "text-white" : "text-blue-300"
+              }`}
+              fill="transparent"
+              strokeWidth={32}
+            />
           </button>
           <button
             className={`py-2 px-4 rounded cursor-pointer ${
-              selectedShape === "circle" ? "bg-green-500" : "bg-gray-700"
+              selectedShape === "circle" ? "bg-green-500" : ""
             } hover:bg-green-500 text-white`}
             id="circle"
             onClick={() => handleShapeBtn("circle")}
           >
-            <FaCircle />
+            <FaCircle
+              className={`w-6 h-6 ${
+                selectedShape === "circle" ? "text-white" : "text-blue-300"
+              }`}
+              fill="transparent"
+              strokeWidth={32}
+            />
           </button>
           <button
             className={`py-2 px-4 rounded cursor-pointer ${
-              selectedShape === "triangle" ? "bg-green-500" : "bg-gray-700"
+              selectedShape === "triangle" ? "bg-green-500" : ""
             } hover:bg-green-500 text-white`}
             id="triangle"
             onClick={() => handleShapeBtn("triangle")}
           >
-            <FiTriangle />
+            <FiTriangle
+              className={`w-6 h-6 ${
+                selectedShape === "triangle" ? "text-white" : "text-blue-300"
+              }`}
+              fill="transparent"
+            />
           </button>
         </div>
-        <div className="flex flex-col items-center justify-center gap-2 w-full text-black">
-          <h2 className="text-xl mt-6 mb-4">Change fill shape</h2>
-          <input
-            type="checkbox"
-            checked={isFillShape}
-            onChange={handleFillShapeChange}
-            className="w-4 h-4"
-          />
-        </div>
-        <div className="flex flex-col items-center justify-center gap-2 w-full text-black">
-          <h2 className="text-xl mt-6 mb-4">Stroke Width</h2>
-          <input
-            type="range"
-            min="1"
-            max="10"
-            value={strokeWidth}
-            onChange={handleStrokeWidthChange}
-          />
-          <span>{strokeWidth}</span>
-        </div>
       </div>
       <div
-        className="flex flex-col items-center cursor-pointer"
+        className={`flex flex-col items-center justify-center cursor-pointer w-16 h-16 rounded-full bg-gray-100
+            ${contentState.expandDrawMenu ? "text-green-600" : ""}`}
         onClick={handleDraw}
       >
-        <FaPencil className="w-9 h-9" />
-        <span className="text-base mb-6">Draw</span>
+        <FaPencil className="w-6 h-6" />
+        <span className="text-xs">Draw</span>
       </div>
       <div
-        className={`absolute left-40 top-0 py-8 border rounded-br-2xl
+        className={`absolute left-40 top-0 py-8 rounded-br-2xl
            rounded-tr-2xl bg-white transition-all duration-200 ease-in-out
-           shadow shadow-blue-500
+           shadow shadow-gray-400
            flex flex-col items-center
            
             ${
@@ -281,32 +280,35 @@ function Menu() {
       >
         <DrawMenu />
       </div>
-      <div className="flex flex-col items-center cursor-pointer">
+      <div
+        className={`flex flex-col items-center justify-center cursor-pointer w-16 h-16 rounded-full bg-gray-100
+            ${contentState.tool === "text" ? "text-green-600" : ""}`}
+      >
         <FaTextHeight
-          className="w-9 h-9"
+          className="w-6 h-6"
           onClick={(event) => handleTextBtn(event, "text")}
         />
-        <span className="text-base mb-6">Elements</span>
+        <span className="text-xs">Text</span>
       </div>
       <div className="flex flex-col items-center gap-4 mt-6">
-        <label htmlFor="fileInput" className="text-base mb-2">
-          <FaUpload className="mr-2 w-9 h-9" />
+        <label htmlFor="fileInput" className="text-xs mb-2">
+          <FaUpload className="mr-2 w-6 h-6" />
         </label>
         <input
           type="file"
           id="fileInput"
           accept="image/*"
           onChange={handleFileChange}
-          className="text-sm mb-4"
+          className="text-xs mb-4"
         />
         <label htmlFor="urlInput" className="text-base mb-2">
-          <FaLink className="mr-2 w-9 h-9" />
+          <FaLink className="mr-2 w-6 h-6" />
         </label>
         <input
           type="text"
           id="urlInput"
           onChange={handleUrlChange}
-          className="text-base mb-4 bg-white w-1/2 text-black"
+          className="text-sx mb-4 bg-white w-1/2 text-black"
           placeholder="image URL"
         />
       </div>

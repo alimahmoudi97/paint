@@ -85,9 +85,9 @@ function Layers() {
   }, [selectedLayerItem]);
   return (
     <div className="mt-4">
-      <h2 className="text-2xl mb-4">Layers</h2>
+      <h2 className="text-base font-semibold mb-4">Layers</h2>
       <div className="flex justify-between">
-        <div>
+        <div className="w-full space-y-1 max-h-64 overflow-y-auto  scrollbar">
           {contentState.canvas?.getObjects().map((obj, index) => (
             <div
               key={index}
@@ -96,19 +96,23 @@ function Layers() {
               onDrop={(e) => handleDrop(e, index)}
               onDragOver={handleDragOver}
               onClick={() => handleLayerClick(index)}
-              className={`${selectedLayerItem === index ? "bg-red-200" : ""}`}
+              className={` p-2 rounded-sm cursor-pointer text-xs text-gray-600 font-medium bg-gray-100 ${
+                selectedLayerItem === index ? "bg-gray-300" : ""
+              }`}
             >
-              Layer {index + 1}-{obj.type}
+              {obj.type}-{index}
             </div>
           ))}
         </div>
-        <div className="flex gap-2">
-          <button onClick={handleArrowUpLayer}>
-            <FaArrowUp className="w-6 h-6" />
-          </button>
-          <button onClick={handleArrowDwonLayer}>
-            <FaArrowDown className="w-6 h-6" />
-          </button>
+        <div>
+          <div className="flex gap-2">
+            <button onClick={handleArrowUpLayer} className="cursor-pointer">
+              <FaArrowUp className="w-6 h-6" />
+            </button>
+            <button onClick={handleArrowDwonLayer} className="cursor-pointer">
+              <FaArrowDown className="w-6 h-6" />
+            </button>
+          </div>
         </div>
       </div>
     </div>

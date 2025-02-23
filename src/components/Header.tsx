@@ -10,6 +10,8 @@ import {
   FaVideo,
 } from "react-icons/fa";
 import useCanvasRecorder from "../hooks/useCanvasRecorder";
+import { IoIosRedo, IoIosUndo } from "react-icons/io";
+import { TbZoomReset } from "react-icons/tb";
 
 function Header() {
   const { contentState, setContentState } = useContextCanvas();
@@ -182,63 +184,63 @@ function Header() {
   }, [contentState.canvas]);
 
   return (
-    <div className="bg-gray-800 flex justify-between px-4 py-2">
-      <div className="flex items-center gap-4 mt-6">
+    <div className="flex justify-between px-4 py-2 shadow">
+      <div className="flex items-center gap-4">
         <button
-          className="text-base py-2 px-1 rounded cursor-pointer text-white"
+          className="text-base py-2 px-1 rounded cursor-pointer "
           onClick={undo}
         >
-          <FaUndo className="w-6 h-6" />
+          <IoIosUndo className="w-6 h-6 text-gray-500" />
         </button>
         <button
-          className="text-base py-2 px-1 rounded cursor-pointer text-white"
+          className="text-base py-2 px-1 rounded cursor-pointer "
           onClick={redo}
         >
-          <FaRedo className="w-6 h-6" />
+          <IoIosRedo className="w-6 h-6 text-gray-500" />
         </button>
         <button
-          className="text-base py-2 px-1 rounded cursor-pointer text-white"
+          className="text-base py-2 px-1 rounded cursor-pointer "
           onClick={handleZoomIn}
         >
-          <FaSearchPlus className="w-6 h-6" />
+          <FaSearchPlus className="w-6 h-6 text-gray-500" />
         </button>
         <button
-          className="text-base py-2 px-1 rounded cursor-pointer text-white"
+          className="text-base py-2 px-1 rounded cursor-pointer "
           onClick={handleZoomOut}
         >
-          <FaSearchMinus className="w-6 h-6" />
+          <FaSearchMinus className="w-6 h-6 text-gray-500" />
         </button>
         <button
-          className="text-base py-2 px-1 rounded cursor-pointer text-white"
+          className="text-base py-2 px-1 rounded cursor-pointer "
           onClick={handleFit}
         >
-          <FaExpand className="w-6 h-6" />
+          <FaExpand className="w-6 h-6 text-gray-500" />
         </button>
         <button
-          className="text-base py-2 px-1 rounded cursor-pointer text-white"
+          className="text-base py-2 px-1 rounded cursor-pointer "
           onClick={handleResetZoom}
         >
-          <FaUndo className="w-6 h-6" />
+          <TbZoomReset className="w-6 h-6 text-gray-500" />
         </button>
       </div>
       <div className="flex flex-row gap-4">
         <button
-          className="text-base py-2 px-1 mt-6 rounded cursor-pointer bg-blue-500 hover:bg-blue-700 text-white"
+          className="text-base text-white py-2 px-2 rounded cursor-pointer bg-gray-500 hover:bg-blue-700 "
           onClick={handleExport}
         >
           Export as Image
         </button>
-        <div className="flex items-center gap-4 mt-6">
+        <div className="flex items-center gap-4">
           {recording ? (
             <button
-              className="text-base py-2 px-1 rounded cursor-pointer bg-red-500 hover:bg-red-700 text-white"
+              className="text-base py-2 px-1 rounded cursor-pointer bg-red-500 hover:bg-red-700 "
               onClick={stopRecording}
             >
               <FaStop className="w-6 h-6" />
             </button>
           ) : (
             <button
-              className="text-base py-2 px-1 rounded cursor-pointer bg-green-500 hover:bg-green-700 text-white"
+              className="text-base py-2 px-2 rounded-full text-white cursor-pointer bg-green-500 hover:bg-green-700 "
               onClick={startRecording}
             >
               <FaVideo className="w-6 h-6" />
@@ -248,7 +250,7 @@ function Header() {
             <a
               href={videoURL}
               download="canvas-recording.webm"
-              className="text-base py-2 px-1 rounded cursor-pointer bg-blue-500 hover:bg-blue-700 text-white"
+              className="text-base py-2 px-1 rounded cursor-pointer bg-blue-500 hover:bg-blue-700 "
             >
               Download Video
             </a>
