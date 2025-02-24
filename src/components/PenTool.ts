@@ -22,8 +22,8 @@ function PenTool({ canvas, contentState, setContentState }: BaseProps) {
 
     if (canvas.freeDrawingBrush) {
       canvas.isDrawingMode = true;
-      canvas.freeDrawingBrush.color = contentState.colorShape || "#000000";
-      canvas.freeDrawingBrush.width = contentState.strokeWidth || 5;
+      canvas.freeDrawingBrush.color = contentState.colorShape;
+      canvas.freeDrawingBrush.width = contentState.strokeWidth;
     }
   };
 

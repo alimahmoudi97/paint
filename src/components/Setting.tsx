@@ -2,13 +2,10 @@ import { useContextCanvas } from "../hooks/useContextCanvas";
 import Layers from "./Layers";
 import ObjectSetting from "./ObjectSetting";
 import TypographySetting from "./TypographySetting";
+import PenToolSetting from "./PenToolSetting";
 
 function Setting() {
   const { contentState } = useContextCanvas();
-
-  // useEffect(() => {
-  //   console.log("selected object:", contentState.selectedObject?.type);
-  // }, [contentState]);
 
   return (
     <div className="h-screen bg-white w-full flex flex-col px-2 py-4 z-100 shadow-lg relative">
@@ -22,6 +19,9 @@ function Setting() {
       {contentState.tool === "text" ||
       contentState.selectedObject?.type === "i-text" ? (
         <TypographySetting />
+      ) : contentState.tool === "pen" ||
+        contentState.selectedObject?.type === "path" ? (
+        <PenToolSetting />
       ) : (
         <>
           <ObjectSetting />
