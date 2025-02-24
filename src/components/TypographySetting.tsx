@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useContextCanvas } from "../hooks/useContextCanvas";
 
 function TypographySetting() {
@@ -10,18 +11,23 @@ function TypographySetting() {
     const canvas = contentState.canvas;
     if (!canvas) return;
 
+    setContentState((prev) => ({
+      ...prev,
+      [property]: value,
+    }));
+
     const activeObject = canvas.getActiveObject();
 
     if (activeObject) {
-      activeObject.set(property, value);
+      activeObject.set(property === "fontColor" ? "fill" : property, value);
       activeObject.setCoords();
       canvas.renderAll();
-      setContentState((prev) => ({
-        ...prev,
-        selectedObject: activeObject,
-      }));
     }
   };
+
+  useEffect(() => {
+    console.log("contentState:", contentState);
+  }, [contentState]);
 
   return (
     <div className="flex flex-col gap-2 mt-4">
@@ -31,7 +37,7 @@ function TypographySetting() {
         <input
           type="number"
           className="bg-gray-100 p-2 rounded"
-          value={contentState.selectedObject?.fontSize || 16}
+          value={contentState.fontSize || 16}
           onChange={(e) =>
             handlePropertyChange("fontSize", parseInt(e.target.value))
           }
@@ -42,17 +48,24 @@ function TypographySetting() {
         <input
           type="text"
           className="bg-gray-100 p-2 rounded"
-          value={contentState.selectedObject?.fontFamily || "Arial"}
+          value={contentState.fontFamily || "Arial"}
           onChange={(e) => handlePropertyChange("fontFamily", e.target.value)}
         />
       </div>
-      <div className="flex flex-col gap-2">
-        <label className="text-sm font-medium">Font Color</label>
+      <label className="text-sm font-medium">Font Color</label>
+      <div className="flex items-center gap-2">
         <input
           type="color"
-          className="bg-gray-100 p-2 rounded"
-          value={contentState.selectedObject?.fill || "#000000"}
-          onChange={(e) => handlePropertyChange("fill", e.target.value)}
+          className="bg-gray-100 w-8 rounded"
+          value={contentState.fontColor || "#000000"}
+          onChange={(e) => handlePropertyChange("fontColor", e.target.value)}
+        />
+        <input
+          type="text"
+          value={contentState.fontColor}
+          onChange={(e) => handlePropertyChange("fontColor", e.target.value)}
+          placeholder={contentState.strokeColor}
+          className="focus:outline-0 w-16"
         />
       </div>
     </div>

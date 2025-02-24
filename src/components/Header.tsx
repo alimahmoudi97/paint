@@ -68,7 +68,7 @@ function Header() {
         redoStack,
       }));
     } else {
-      console.log("No states to undo.");
+      // console.log("No states to undo.");
     }
   };
 
@@ -107,7 +107,7 @@ function Header() {
         redoStack,
       }));
     } else {
-      console.log("No states to redo.");
+      // console.log("No states to redo.");
     }
   };
 

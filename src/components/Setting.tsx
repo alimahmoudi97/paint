@@ -6,6 +6,10 @@ import TypographySetting from "./TypographySetting";
 function Setting() {
   const { contentState } = useContextCanvas();
 
+  // useEffect(() => {
+  //   console.log("selected object:", contentState.selectedObject?.type);
+  // }, [contentState]);
+
   return (
     <div className="h-screen bg-white w-full flex flex-col px-2 py-4 z-100 shadow-lg relative">
       <h2 className="text-base mb-4 font-semibold">Design</h2>
@@ -15,8 +19,10 @@ function Setting() {
             contentState.selectedObject.type.slice(1)
           : ""}
       </h2>
-      {contentState.tool === "text" && <TypographySetting />}
-      {contentState.selectedObject && (
+      {contentState.tool === "text" ||
+      contentState.selectedObject?.type === "i-text" ? (
+        <TypographySetting />
+      ) : (
         <>
           <ObjectSetting />
           <Layers />

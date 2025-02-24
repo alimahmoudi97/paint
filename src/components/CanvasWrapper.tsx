@@ -153,7 +153,7 @@ function CanvasWrapper() {
       contentState.canvas.isDrawingMode = false;
     }
 
-    console.log(contentState.tool);
+    // console.log(contentState.tool);
   }, [contentState]);
 
   useEffect(() => {

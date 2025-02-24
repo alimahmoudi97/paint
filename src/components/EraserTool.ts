@@ -18,7 +18,7 @@ export const EraserTool = ({
   }
 
   const onMouseDown = (e: TPointerEventInfo) => {
-    console.log("onMouseDown:", contentState.tool);
+    // console.log("onMouseDown:", contentState.tool);
     if (contentState.tool !== "eraser") return;
     objectToRemove = [];
 
@@ -32,7 +32,7 @@ export const EraserTool = ({
 
     objectToRemove.push(e.target);
     e.target.set({ opacity: 0.5 });
-    console.log(objectToRemove);
+    // console.log(objectToRemove);
 
     canvas.renderAll();
   };
@@ -49,7 +49,7 @@ export const EraserTool = ({
     objectToRemove.push(e.target);
     e.target.set({ opacity: 0.5 });
 
-    console.log("Object To Remove:", objectToRemove);
+    // console.log("Object To Remove:", objectToRemove);
     canvas.renderAll();
   };
 
@@ -77,7 +77,7 @@ export const EraserTool = ({
 
     const objectsToSelect = canvas.getObjects();
 
-    console.log("HI", objectsToSelect);
+    // console.log("HI", objectsToSelect);
 
     objectToRemove.forEach((object) => {
       if (object.type === "group") {

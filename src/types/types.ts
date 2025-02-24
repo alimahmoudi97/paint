@@ -22,6 +22,9 @@ export interface ContentState {
   name: number;
   selectedObject?: FabricObject;
   showModal: boolean;
+  fontSize: number;
+  fontFamily: string;
+  fontColor: string;
 }
 
 export interface CanvasContextProps {

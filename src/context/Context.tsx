@@ -21,6 +21,9 @@ function ContextProvider({ children }: { children: ReactNode }) {
     redoStack: [],
     name: 0,
     showModal: false,
+    fontSize: 16,
+    fontColor: "#000000",
+    fontFamily: "Arial",
   });
   const contentStateRef = useRef<ContentState | null>(null);
 
