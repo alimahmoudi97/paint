@@ -12,6 +12,7 @@ import {
 import useCanvasRecorder from "../hooks/useCanvasRecorder";
 import { IoIosRedo, IoIosUndo } from "react-icons/io";
 import { TbZoomReset } from "react-icons/tb";
+import { LuMousePointer } from "react-icons/lu";
 
 function Header() {
   const { contentState, setContentState } = useContextCanvas();
@@ -221,6 +222,17 @@ function Header() {
           onClick={handleResetZoom}
         >
           <TbZoomReset className="w-6 h-6 text-gray-500" />
+        </button>
+        <button
+          className="text-base py-2 px-1 rounded cursor-pointer group"
+          onClick={() => {
+            setContentState((prev) => ({ ...prev, tool: "select" }));
+          }}
+        >
+          <LuMousePointer className="w-6 h-6 text-gray-500" />
+          <span className="hidden group-hover:absolute group-hover:block top-8">
+            select
+          </span>
         </button>
       </div>
       <div className="flex flex-row gap-4">
