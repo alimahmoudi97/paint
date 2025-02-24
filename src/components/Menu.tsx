@@ -34,72 +34,10 @@ function Menu() {
     setSelectedShape(type);
   };
 
-  // const handleDrawBtn = (type: string) => {
-  //   setContentState((prev) => ({
-  //     ...prev,
-  //     type,
-  //     tool: "tools",
-  //     colorShape: selectedColor,
-  //     strokeWidth,
-  //     fillShape: isFillShape,
-  //     strokeColor: selectedColor,
-  //   }));
-  //   setSelectedShape(type);
-  // };
-
-  // const handleColorChange = (color: string) => {
-  //   setSelectedColor(color);
-  //   setContentState((prev) => ({
-  //     ...prev,
-  //     colorShape: color,
-  //     strokeColor: color,
-  //     tool: "color",
-  //     type: "draw",
-  //   }));
-  // };
-
-  const handleFillShapeChange = () => {
-    setFillShape(!isFillShape);
-  };
-
-  const handleStrokeWidthChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setStrokeWidth(Number(event.target.value));
-  };
-
-  // const handlePenBtn = (
-  //   event: React.MouseEvent<HTMLButtonElement>,
-  //   tool: string
-  // ) => {
-  //   event.stopPropagation();
-  //   setContentState((prev) => ({
-  //     ...prev,
-  //     tool,
-  //   }));
-  //   console.log("Ali");
-  // };
-
-  // const handleEraserBtn = (
-  //   event: React.MouseEvent<HTMLButtonElement>,
-  //   tool: string
-  // ) => {
-  //   event.stopPropagation();
-  //   setContentState((prev) => ({ ...prev, tool }));
-  // };
-
   const handleTextBtn = (event: React.MouseEvent<SVGElement>, tool: string) => {
     event.stopPropagation();
     setContentState((prev) => ({ ...prev, tool }));
   };
-
-  // const handleSelectBtn = (
-  //   event: React.MouseEvent<HTMLButtonElement>,
-  //   tool: string
-  // ) => {
-  //   event.stopPropagation();
-  //   setContentState((prev) => ({ ...prev, tool }));
-  // };
 
   const handleElements = () => {
     setContentState((pre) => ({
