@@ -72,48 +72,33 @@ function Menu() {
     opt.e.stopPropagation();
   };
 
+  const handleColseExpanedMenu = () => {
+    setContentState((prev) => ({
+      ...prev,
+      expandDrawMenu: false,
+      expandElementsMenu: false,
+    }));
+  };
+
   useEffect(() => {
     const canvas = contentState.canvas;
     if (canvas) {
       canvas.on("mouse:wheel", handleMouseWheel);
+      canvas.on("mouse:down", handleColseExpanedMenu);
     }
 
     return () => {
       if (canvas) {
         canvas.off("mouse:wheel", handleMouseWheel);
+        canvas.off("mouse:down", handleColseExpanedMenu);
       }
     };
   }, [contentState.canvas]);
-  useEffect(() => {
-    const canvas = contentState.canvas;
-
-    const handleObjectSelected = () => {
-      if (contentState.tool === "eraser") return;
-      const activeObject = canvas?.getActiveObject();
-      if (activeObject) {
-        // activeObject.set({
-        //   fill: isFillShape ? selectedColor : "transparent",
-        //   stroke: selectedColor,
-        //   strokeWidth,
-        // });
-
-        canvas?.renderAll();
-      }
-    };
-
-    canvas?.on("selection:created", handleObjectSelected);
-    canvas?.on("selection:updated", handleObjectSelected);
-
-    return () => {
-      canvas?.off("selection:created", handleObjectSelected);
-      // canvas?.off("selection:updated", handleObjectSelected);
-    };
-  }, [contentState]);
 
   return (
     <div className="h-screen flex flex-col items-center p-4 gap-2 z-100 shadow-lg relative">
       <div
-        className={`flex flex-col items-center justify-center p-1 cursor-pointer w-16 h-16 rounded-full bg-gray-100
+        className={`flex flex-col items-center justify-center p-1 cursor-pointer w-16 h-16 rounded-full relative bg-gray-100
         ${contentState.expandElementsMenu ? "text-green-500" : ""}`}
         onClick={handleElements}
       >
@@ -121,7 +106,7 @@ function Menu() {
         <span className="text-xs">Elements</span>
       </div>
       <div
-        className={`absolute left-40 top-0  w-90 z-999999 rounded-br
+        className={`absolute left-24 top-0 w-90  rounded-br
            rounded-tr bg-white transition-all duration-200 ease-in-out
            shadow shadow-gray-400
            flex flex-col pb-8
@@ -219,7 +204,7 @@ function Menu() {
         </div>
       </div>
       <div
-        className={`flex flex-col items-center justify-center cursor-pointer w-16 h-16 rounded-full bg-gray-100
+        className={`flex flex-col items-center justify-center cursor-pointer w-16 h-16 relative rounded-full bg-gray-100
             ${contentState.expandDrawMenu ? "text-green-600" : ""}`}
         onClick={handleDraw}
       >
@@ -227,7 +212,7 @@ function Menu() {
         <span className="text-xs">Draw</span>
       </div>
       <div
-        className={`absolute left-40 top-0 py-8 rounded-br-2xl
+        className={`absolute left-24 top-0 py-8 rounded-br-2xl
            rounded-tr-2xl bg-white transition-all duration-200 ease-in-out
            shadow shadow-gray-400
            flex flex-col items-center
