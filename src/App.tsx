@@ -16,7 +16,7 @@ function App() {
           <Header />
           <Canvas />
         </div>
-        <div>
+        <div className="bg-amber-100 flex-1">
           <Setting />
         </div>
       </div>
