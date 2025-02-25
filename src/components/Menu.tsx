@@ -14,6 +14,10 @@ import { Image, Point, TEvent } from "fabric";
 import { useContextCanvas } from "../hooks/useContextCanvas";
 import Modal from "./Modal";
 import { LuImport } from "react-icons/lu";
+import { BiPolygon } from "react-icons/bi";
+import { IoEllipse } from "react-icons/io5";
+import { LiaNeos } from "react-icons/lia";
+import { TbLine } from "react-icons/tb";
 
 function Menu() {
   const { contentState, setContentState } = useContextCanvas();
@@ -171,6 +175,45 @@ function Menu() {
                 selectedShape === "triangle" ? "text-white" : "text-blue-300"
               }`}
               fill="transparent"
+            />
+          </button>
+          <button
+            className={`py-2 px-4 rounded cursor-pointer ${
+              selectedShape === "line" ? "bg-green-500" : ""
+            } hover:bg-green-500 text-white`}
+            id="line"
+            onClick={() => handleShapeBtn("line")}
+          >
+            <TbLine
+              className={`w-6 h-6 ${
+                selectedShape === "line" ? "text-white" : "text-blue-300"
+              }`}
+            />
+          </button>
+          <button
+            className={`py-2 px-4 rounded cursor-pointer ${
+              selectedShape === "ellipse" ? "bg-green-500" : ""
+            } hover:bg-green-500 text-white`}
+            id="ellipse"
+            onClick={() => handleShapeBtn("ellipse")}
+          >
+            <IoEllipse
+              className={`w-6 h-6 ${
+                selectedShape === "ellipse" ? "text-white" : "text-blue-300"
+              }`}
+            />
+          </button>
+          <button
+            className={`py-2 px-4 rounded cursor-pointer ${
+              selectedShape === "polygon" ? "bg-green-500 text-white" : ""
+            } hover:bg-green-500 text-white`}
+            id="polygon"
+            onClick={() => handleShapeBtn("polygon")}
+          >
+            <BiPolygon
+              className={`w-6 h-6 ${
+                selectedShape === "polygon" ? "text-white" : "text-blue-300"
+              }`}
             />
           </button>
         </div>
