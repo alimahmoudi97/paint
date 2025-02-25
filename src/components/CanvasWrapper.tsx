@@ -77,7 +77,7 @@ function CanvasWrapper() {
       ctx.restore();
     };
 
-    canvas.setWidth(Math.floor(window.document.body.offsetWidth * 0.9));
+    canvas.setWidth(Math.floor(window.document.body.offsetWidth * 0.8));
     canvas.setHeight(Math.floor(window.innerHeight * 0.9));
 
     setContentState((prev) => ({ ...prev, canvas: canvas }));

@@ -8,15 +8,15 @@ import Setting from "./components/Setting";
 function App() {
   return (
     <ContextProvider>
-      <div className="grid grid-cols-12 h-screen">
-        <div className="col-span-1">
+      <div className="flex h-screen">
+        <div>
           <Menu />
         </div>
-        <div className="col-span-9">
+        <div>
           <Header />
           <Canvas />
         </div>
-        <div className="col-span-2">
+        <div>
           <Setting />
         </div>
       </div>
