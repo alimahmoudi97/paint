@@ -24,6 +24,7 @@ function ContextProvider({ children }: { children: ReactNode }) {
     fontSize: 16,
     fontColor: "#000000",
     fontFamily: "Arial",
+    canvasBackgroundColor: "white",
   });
   const contentStateRef = useRef<ContentState | null>(null);
 

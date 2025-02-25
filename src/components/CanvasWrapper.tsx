@@ -39,7 +39,7 @@ function CanvasWrapper() {
     canvas.selectionBorderColor = "blue";
 
     canvas._renderBackground = function (ctx) {
-      ctx.fillStyle = "white";
+      ctx.fillStyle = contentState.canvasBackgroundColor;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       const zoom = this.getZoom();

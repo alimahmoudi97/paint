@@ -59,6 +59,7 @@ function ObjectSetting() {
     const activeObject = canvas.getActiveObject();
 
     if (activeObject) {
+      console.log(value as number);
       activeObject.set(property, value);
       activeObject.setCoords();
       canvas.renderAll();

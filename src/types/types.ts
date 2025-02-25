@@ -25,6 +25,7 @@ export interface ContentState {
   fontSize: number;
   fontFamily: string;
   fontColor: string;
+  canvasBackgroundColor: string;
 }
 
 export interface CanvasContextProps {
