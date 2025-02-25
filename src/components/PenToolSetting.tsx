@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { useContextCanvas } from "../hooks/useContextCanvas";
 
 function PenToolSetting() {

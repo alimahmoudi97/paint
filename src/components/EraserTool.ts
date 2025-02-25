@@ -18,7 +18,6 @@ export const EraserTool = ({
   }
 
   const onMouseDown = (e: TPointerEventInfo) => {
-    // console.log("onMouseDown:", contentState.tool);
     if (contentState.tool !== "eraser") return;
     objectToRemove = [];
 
@@ -32,7 +31,6 @@ export const EraserTool = ({
 
     objectToRemove.push(e.target);
     e.target.set({ opacity: 0.5 });
-    // console.log(objectToRemove);
 
     canvas.renderAll();
   };
@@ -49,35 +47,11 @@ export const EraserTool = ({
     objectToRemove.push(e.target);
     e.target.set({ opacity: 0.5 });
 
-    // console.log("Object To Remove:", objectToRemove);
     canvas.renderAll();
   };
 
-  // function isObjectInSelectionArea(
-  //   object: Object,
-  //   selectionArea: Rect
-  // ): boolean {
-  //   const objectBoundingBox = object.getBoundingRect();
-  //   const selectionBoundingBox = selectionArea.getBoundingRect();
-
-  //   return !(
-  //     objectBoundingBox.left >
-  //       selectionBoundingBox.left + selectionBoundingBox.width ||
-  //     objectBoundingBox.left + objectBoundingBox.width <
-  //       selectionBoundingBox.left ||
-  //     objectBoundingBox.top >
-  //       selectionBoundingBox.top + selectionBoundingBox.height ||
-  //     objectBoundingBox.top + objectBoundingBox.height <
-  //       selectionBoundingBox.top
-  //   );
-  // }
-
   const onMouseUp = (e: TPointerEventInfo) => {
     if (contentState.tool !== "eraser") return;
-
-    const objectsToSelect = canvas.getObjects();
-
-    // console.log("HI", objectsToSelect);
 
     objectToRemove.forEach((object) => {
       if (object.type === "group") {

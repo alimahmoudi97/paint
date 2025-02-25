@@ -1,39 +1,30 @@
 import { useEffect, useState } from "react";
-import {
-  FaCircle,
-  FaLink,
-  FaSquare,
-  FaTextHeight,
-  FaUpload,
-} from "react-icons/fa";
+import { FaCircle, FaSquare, FaTextHeight } from "react-icons/fa";
 import { FiTriangle } from "react-icons/fi";
 import { RiApps2AddLine } from "react-icons/ri";
 import { FaPencil } from "react-icons/fa6";
 import DrawMenu from "./DrawMenu";
-import { Image, Point, TEvent } from "fabric";
+import { Point, TEvent } from "fabric";
 import { useContextCanvas } from "../hooks/useContextCanvas";
 import Modal from "./Modal";
 import { LuImport } from "react-icons/lu";
 import { BiPolygon } from "react-icons/bi";
 import { IoEllipse } from "react-icons/io5";
-import { LiaNeos } from "react-icons/lia";
 import { TbLine } from "react-icons/tb";
 
 function Menu() {
   const { contentState, setContentState } = useContextCanvas();
   const [selectedShape, setSelectedShape] = useState("");
-  const [isFillShape, setFillShape] = useState<boolean>(true);
-  const [strokeWidth, setStrokeWidth] = useState<number>(1);
+  const [isFillShape] = useState<boolean>(true);
+  const [strokeWidth] = useState<number>(1);
 
   const handleShapeBtn = (type: string) => {
     setContentState((prev) => ({
       ...prev,
       type,
       tool: "shape",
-      // colorShape: selectedColor,
       strokeWidth,
       fillShape: isFillShape,
-      // strokeColor: selectedColor,
     }));
     setSelectedShape(type);
   };

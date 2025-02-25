@@ -1,6 +1,6 @@
 import { FaArrowDown, FaArrowUp } from "react-icons/fa";
 import { useContextCanvas } from "../hooks/useContextCanvas";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 function Layers() {
   const { contentState } = useContextCanvas();
@@ -80,9 +80,6 @@ function Layers() {
     canvas.renderAll();
   };
 
-  // useEffect(() => {
-  //   console.log(selectedLayerItem);
-  // }, [selectedLayerItem]);
   return (
     <div className="mt-4">
       <h2 className="text-base font-semibold mb-4">Layers</h2>
