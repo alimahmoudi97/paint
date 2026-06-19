@@ -6,7 +6,28 @@ import {
   BsAlignStart,
   BsAlignTop,
 } from "react-icons/bs";
+import { LuMousePointerClick } from "react-icons/lu";
 import { useContextCanvas } from "../hooks/useContextCanvas";
+import {
+  ColorField,
+  IconButton,
+  NumberField,
+  SettingCard,
+  ToggleSwitch,
+} from "./SettingControls";
+
+function TransformStat({ label, value }: { label: string; value: number }) {
+  return (
+    <div className="bg-white border border-gray-200 rounded-lg px-3 py-2">
+      <div className="text-[10px] font-medium text-gray-400 uppercase tracking-wide">
+        {label}
+      </div>
+      <div className="text-sm font-semibold text-gray-700 font-mono">
+        {value.toFixed(0)}
+      </div>
+    </div>
+  );
+}
 
 function ObjectSetting() {
   const { contentState, setContentState } = useContextCanvas();
@@ -59,7 +80,6 @@ function ObjectSetting() {
     const activeObject = canvas.getActiveObject();
 
     if (activeObject) {
-      console.log(value as number);
       activeObject.set(property, value);
       activeObject.setCoords();
       canvas.renderAll();
@@ -77,207 +97,119 @@ function ObjectSetting() {
       }
     }
   };
-  return contentState.selectedObject ? (
-    <div className="text-left">
-      <div>
-        <h3 className="my-2 font-semibold">Position</h3>
-        <div className="flex items-center justify-evenly">
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-500">Top :</span>
-            <span className="bg-gray-100 w-20 p-2 text-sm rounded-sm">
-              {contentState.selectedObject.top.toFixed(0)}
-            </span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-500">Left :</span>
-            <span className="bg-gray-100 w-20 p-2 text-sm rounded-sm">
-              {contentState.selectedObject.left.toFixed(0)}
-            </span>
-          </div>
+
+  const selectedObject = contentState.selectedObject;
+
+  if (!selectedObject) {
+    return (
+      <SettingCard>
+        <div className="flex flex-col items-center justify-center text-center py-6 text-gray-400">
+          <LuMousePointerClick className="w-6 h-6 mb-2" />
+          <p className="text-sm">Select an object on the canvas to edit its properties</p>
         </div>
-      </div>
-      <div className="border-b border-gray-300 pb-2">
-        <h3 className="font-semibold">layout</h3>
-        <div className="flex items-center justify-evenly mt-2">
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-500">Width :</span>
-            <span className="bg-gray-100 w-20 p-2 text-sm rounded-sm">
-              {contentState.selectedObject.width.toFixed(2)}
-            </span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-500">Height :</span>
-            <span className="bg-gray-100 w-20 p-2 text-sm rounded-sm">
-              {contentState.selectedObject.height.toFixed(2)}
-            </span>
-          </div>
+      </SettingCard>
+    );
+  }
+
+  const fillColor =
+    typeof selectedObject.fill === "string" ? selectedObject.fill : "#000000";
+  const strokeColor =
+    typeof selectedObject.stroke === "string"
+      ? selectedObject.stroke
+      : "#000000";
+  const opacityPercent =
+    typeof selectedObject.opacity === "number"
+      ? Math.round(selectedObject.opacity * 100)
+      : 100;
+
+  return (
+    <div className="flex flex-col gap-3">
+      <SettingCard title="Transform">
+        <div className="grid grid-cols-2 gap-2">
+          <TransformStat label="X" value={selectedObject.left} />
+          <TransformStat label="Y" value={selectedObject.top} />
+          <TransformStat label="Width" value={selectedObject.width} />
+          <TransformStat label="Height" value={selectedObject.height} />
         </div>
-      </div>
-      <div className="flex flex-col items-center justify-evenly">
-        <div className="flex flex-col gap-2 w-full border-b border-gray-300 py-2">
-          <span className="font-semibold">Fill</span>
-          <div className="flex gap-2">
-            <span className="text-sm text-gray-600">Fill Shape</span>
-            <input
-              type="checkbox"
-              className="bg-gray-100 w-24 p-2"
-              checked={contentState.fillShape || false}
-              onChange={(e) =>
-                setContentState((prev) => ({
-                  ...prev,
-                  fillShape: e.target.checked,
-                }))
-              }
-            />
-          </div>
-          <div className="flex items-center bg-gray-100 rounded-sm p-1">
-            <div>
-              <input
-                type="color"
-                className="bg-gray-100 w-8 h-8"
-                value={
-                  typeof contentState.selectedObject.fill === "string"
-                    ? contentState.selectedObject.fill
-                    : "#000000"
-                }
-                onChange={(e) => handlePropertyChange("fill", e.target.value)}
-              />
-            </div>
-            <input
-              type="text"
-              value={
-                typeof contentState.selectedObject.fill === "string"
-                  ? contentState.selectedObject.fill
-                  : "#000000"
-              }
-              onChange={(e) => handlePropertyChange("fill", e.target.value)}
-              placeholder={contentState.colorShape}
-              className="focus:outline-0  text-sm"
-            />
-            <span className="mr-0.5 text-sm text-gray-500">%</span>
-            <input
-              className="w-8 focus:outline-0 text-gray-800 text-sm"
-              min="0"
-              max="100"
-              step="1"
-              value={
-                typeof contentState.selectedObject.opacity === "number"
-                  ? contentState.selectedObject.opacity * 100
-                  : 100
-              }
-              onChange={(e) =>
-                handlePropertyChange(
-                  "opacity",
-                  parseFloat(e.target.value) / 100
-                )
-              }
-              placeholder={contentState.selectedObject.opacity.toString()}
-            />
-          </div>
-        </div>
-        <div className="flex flex-col w-full p-1 border-b border-gray-300">
-          <span className="font-semibold">Stroke</span>
-          <div className="flex justify-between">
-            <div className="flex items-center">
-              <span className="text-sm whitespace-nowrap mr-1 text-gray-500">
-                Color :
-              </span>
-              <div className="flex items-center bg-gray-100 rounded-sm p-1.5 w-full">
-                <div className="flex-1">
-                  <input
-                    type="color"
-                    className="bg-gray-100 w-8 h-8"
-                    value={
-                      typeof contentState.selectedObject.stroke === "string"
-                        ? contentState.selectedObject.stroke
-                        : "#000000"
-                    }
-                    onChange={(e) =>
-                      handlePropertyChange("stroke", e.target.value)
-                    }
-                  />
-                </div>
-                <input
-                  type="text"
-                  value={
-                    typeof contentState.selectedObject.stroke === "string"
-                      ? contentState.selectedObject.stroke
-                      : "#000000"
-                  }
-                  onChange={(e) =>
-                    handlePropertyChange("stroke", e.target.value)
-                  }
-                  placeholder={contentState.strokeColor}
-                  className="focus:outline-0 w-14"
-                />
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-500">Width :</span>
-              <input
-                type="number"
-                className="bg-gray-100 w-12 p-2 text-sm"
-                value={contentState.selectedObject.strokeWidth || 1}
-                onChange={(e) =>
-                  handlePropertyChange("strokeWidth", e.target.value)
-                }
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className="flex flex-col items-start p-1 border-b border-gray-300">
-        <h3 className="text-base font-semibold mb-2">Align</h3>
-        <div className="flex items-center gap-2">
-          <span className="mr-4 text-sm text-gray-600">vertical :</span>
-          <div className="flex gap-2">
-            <button
-              className="bg-gray-300 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded cursor-pointer"
-              onClick={() => alignObject("vertical-start")}
-            >
-              <BsAlignTop />
-            </button>
-            <button
-              className="bg-gray-300 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded cursor-pointer"
-              onClick={() => alignObject("vertical-middle")}
-            >
-              <BsAlignMiddle />
-            </button>
-            <button
-              className="bg-gray-300 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded cursor-pointer"
-              onClick={() => alignObject("vertical-end")}
-            >
-              <BsAlignBottom />
-            </button>
-          </div>
+      </SettingCard>
+
+      <SettingCard title="Fill">
+        <div className="flex items-center justify-between mb-3">
+          <span className="text-sm text-gray-600">Enable fill</span>
+          <ToggleSwitch
+            checked={!!contentState.fillShape}
+            onChange={(checked) =>
+              setContentState((prev) => ({ ...prev, fillShape: checked }))
+            }
+          />
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-sm text-gray-600">horizental :</span>
-          <div className="flex gap-2 mt-2">
-            <button
-              className="bg-gray-300 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded cursor-pointer"
-              onClick={() => alignObject("horizontal-start")}
-            >
-              <BsAlignStart />
-            </button>
-            <button
-              className="bg-gray-300 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded cursor-pointer"
-              onClick={() => alignObject("horizontal-middle")}
-            >
-              <BsAlignCenter />
-            </button>
-            <button
-              className="bg-gray-300 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded cursor-pointer"
-              onClick={() => alignObject("horizontal-end")}
-            >
-              <BsAlignEnd />
-            </button>
+          <ColorField
+            value={fillColor}
+            onChange={(value) => handlePropertyChange("fill", value)}
+          />
+          <NumberField
+            className="w-16"
+            min={0}
+            max={100}
+            suffix="%"
+            value={opacityPercent}
+            onChange={(value) =>
+              handlePropertyChange("opacity", parseFloat(value) / 100)
+            }
+          />
+        </div>
+      </SettingCard>
+
+      <SettingCard title="Stroke">
+        <div className="flex items-center gap-2">
+          <ColorField
+            value={strokeColor}
+            onChange={(value) => handlePropertyChange("stroke", value)}
+          />
+          <NumberField
+            className="w-16"
+            min={0}
+            suffix="px"
+            value={selectedObject.strokeWidth || 1}
+            onChange={(value) => handlePropertyChange("strokeWidth", value)}
+          />
+        </div>
+      </SettingCard>
+
+      <SettingCard title="Alignment">
+        <div className="flex flex-col gap-2.5">
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-gray-500">Vertical</span>
+            <div className="flex gap-1.5">
+              <IconButton title="Top" onClick={() => alignObject("vertical-start")}>
+                <BsAlignTop />
+              </IconButton>
+              <IconButton title="Middle" onClick={() => alignObject("vertical-middle")}>
+                <BsAlignMiddle />
+              </IconButton>
+              <IconButton title="Bottom" onClick={() => alignObject("vertical-end")}>
+                <BsAlignBottom />
+              </IconButton>
+            </div>
+          </div>
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-gray-500">Horizontal</span>
+            <div className="flex gap-1.5">
+              <IconButton title="Left" onClick={() => alignObject("horizontal-start")}>
+                <BsAlignStart />
+              </IconButton>
+              <IconButton title="Center" onClick={() => alignObject("horizontal-middle")}>
+                <BsAlignCenter />
+              </IconButton>
+              <IconButton title="Right" onClick={() => alignObject("horizontal-end")}>
+                <BsAlignEnd />
+              </IconButton>
+            </div>
           </div>
         </div>
-      </div>
+      </SettingCard>
     </div>
-  ) : (
-    <p>No object selected</p>
   );
 }
 export default ObjectSetting;

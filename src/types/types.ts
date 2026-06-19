@@ -26,6 +26,8 @@ export interface ContentState {
   fontFamily: string;
   fontColor: string;
   canvasBackgroundColor: string;
+  isPanMode:boolean,
+  isDragging:boolean
 }
 
 export interface CanvasContextProps {

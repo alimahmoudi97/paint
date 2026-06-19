@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useContextCanvas } from "../hooks/useContextCanvas";
+import { ColorField, FieldRow, NumberField, SettingCard } from "./SettingControls";
 
 function CanvasSetting() {
   const { contentState, setContentState } = useContextCanvas();
@@ -34,7 +35,7 @@ function CanvasSetting() {
           ...prev,
           canvasBackgroundColor: value as string,
         }));
-        canvas.backgroundColor = backgroundColor;
+        canvas.backgroundColor = value as string;
         canvas.renderAll();
         setCanvasBgColor(value as string);
         break;
@@ -49,42 +50,36 @@ function CanvasSetting() {
   };
 
   return (
-    <div className="flex flex-col gap-2 mt-4">
-      <h3 className="text-base font-semibold">Canvas Settings</h3>
-      <div className="flex flex-col gap-2">
-        <label className="text-sm font-medium">Canvas Width</label>
-        <input
-          type="number"
-          className="bg-gray-100 p-2 rounded"
-          value={canvasWidth}
-          onChange={(e) =>
-            handleCanvasPropertyChange("width", parseInt(e.target.value))
-          }
-        />
+    <SettingCard title="Canvas">
+      <div className="flex flex-col gap-3">
+        <FieldRow label="Width">
+          <NumberField
+            suffix="px"
+            className="w-24"
+            value={canvasWidth}
+            onChange={(value) =>
+              handleCanvasPropertyChange("width", parseInt(value))
+            }
+          />
+        </FieldRow>
+        <FieldRow label="Height">
+          <NumberField
+            suffix="px"
+            className="w-24"
+            value={canvasHeight}
+            onChange={(value) =>
+              handleCanvasPropertyChange("height", parseInt(value))
+            }
+          />
+        </FieldRow>
+        <FieldRow label="Background">
+          <ColorField
+            value={backgroundColor as string}
+            onChange={(value) => handleCanvasPropertyChange("backgroundColor", value)}
+          />
+        </FieldRow>
       </div>
-      <div className="flex flex-col gap-2">
-        <label className="text-sm font-medium">Canvas Height</label>
-        <input
-          type="number"
-          className="bg-gray-100 p-2 rounded"
-          value={canvasHeight}
-          onChange={(e) =>
-            handleCanvasPropertyChange("height", parseInt(e.target.value))
-          }
-        />
-      </div>
-      <div className="flex flex-col gap-2">
-        <label className="text-sm font-medium">Background Color</label>
-        <input
-          type="color"
-          className="bg-gray-100  rounded"
-          value={backgroundColor as string}
-          onChange={(e) =>
-            handleCanvasPropertyChange("backgroundColor", e.target.value)
-          }
-        />
-      </div>
-    </div>
+    </SettingCard>
   );
 }
 export default CanvasSetting;

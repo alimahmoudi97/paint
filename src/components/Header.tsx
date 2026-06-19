@@ -1,11 +1,13 @@
 import { useContextCanvas } from "../hooks/useContextCanvas";
 import { useEffect, useRef } from "react";
 import {
+  FaDownload,
   FaExpand,
   FaSearchMinus,
   FaSearchPlus,
   FaStop,
   FaVideo,
+  FaSave,
 } from "react-icons/fa";
 import useCanvasRecorder from "../hooks/useCanvasRecorder";
 import { IoIosRedo, IoIosUndo } from "react-icons/io";
@@ -161,12 +163,28 @@ function Header() {
     }
   };
 
+  const handleSave = () => {
+    const canvas = contentState.canvas;
+    if (!canvas) return;
+    localStorage.setItem("canvas", JSON.stringify(canvas.toJSON()));
+  };
+
+  const handleLoad = () => {
+    const canvas = contentState.canvas;
+    if (!canvas) return;
+    const saved = localStorage.getItem("canvas");
+    if (!saved) return;
+    canvas.clear();
+    canvas.loadFromJSON(JSON.parse(saved)).then(() => canvas.renderAll());
+  };
+
   useEffect(() => {
     const canvas = contentState.canvas;
     if (canvas) {
       canvas.on("object:added", saveState);
       canvas.on("object:modified", saveState);
       canvas.on("object:removed", saveState);
+      handleLoad();
     }
 
     return () => {
@@ -178,90 +196,103 @@ function Header() {
     };
   }, [contentState.canvas]);
 
+  const iconBtnBase =
+    "flex items-center justify-center w-10 h-10 rounded-xl cursor-pointer transition-all duration-200";
+  const iconBtnInactive = "text-gray-500 hover:bg-gray-100 hover:text-purple-500";
+  const iconBtnActive =
+    "bg-gradient-to-br from-purple-500 to-pink-500 text-white shadow-md shadow-purple-500/30";
+
   return (
-    <div className="flex justify-between px-4 py-2 shadow">
-      <div className="flex items-center gap-4">
-        <button
-          className="text-base py-2 px-1 rounded cursor-pointer "
-          onClick={undo}
-        >
-          <IoIosUndo className="w-6 h-6 text-gray-500" />
+    <div className="flex items-center justify-between px-4 py-2.5 bg-white border-b border-gray-100 shadow-sm relative z-10">
+      <div className="flex items-center gap-1">
+        <button title="Undo" className={`${iconBtnBase} ${iconBtnInactive}`} onClick={undo}>
+          <IoIosUndo className="w-5 h-5" />
         </button>
-        <button
-          className="text-base py-2 px-1 rounded cursor-pointer "
-          onClick={redo}
-        >
-          <IoIosRedo className="w-6 h-6 text-gray-500" />
+        <button title="Redo" className={`${iconBtnBase} ${iconBtnInactive}`} onClick={redo}>
+          <IoIosRedo className="w-5 h-5" />
         </button>
-        <button
-          className="text-base py-2 px-1 rounded cursor-pointer "
-          onClick={handleZoomIn}
-        >
-          <FaSearchPlus className="w-6 h-6 text-gray-500" />
+
+        <div className="w-px h-6 bg-gray-200 mx-1" />
+
+        <button title="Zoom In" className={`${iconBtnBase} ${iconBtnInactive}`} onClick={handleZoomIn}>
+          <FaSearchPlus className="w-4 h-4" />
         </button>
-        <button
-          className="text-base py-2 px-1 rounded cursor-pointer "
-          onClick={handleZoomOut}
-        >
-          <FaSearchMinus className="w-6 h-6 text-gray-500" />
+        <button title="Zoom Out" className={`${iconBtnBase} ${iconBtnInactive}`} onClick={handleZoomOut}>
+          <FaSearchMinus className="w-4 h-4" />
         </button>
-        <button
-          className="text-base py-2 px-1 rounded cursor-pointer "
-          onClick={handleFit}
-        >
-          <FaExpand className="w-6 h-6 text-gray-500" />
+        <button title="Fit to Screen" className={`${iconBtnBase} ${iconBtnInactive}`} onClick={handleFit}>
+          <FaExpand className="w-4 h-4" />
         </button>
-        <button
-          className="text-base py-2 px-1 rounded cursor-pointer "
-          onClick={handleResetZoom}
-        >
-          <TbZoomReset className="w-6 h-6 text-gray-500" />
+        <button title="Reset Zoom" className={`${iconBtnBase} ${iconBtnInactive}`} onClick={handleResetZoom}>
+          <TbZoomReset className="w-5 h-5" />
         </button>
+
+        <div className="w-px h-6 bg-gray-200 mx-1" />
+
         <button
-          className="text-base py-2 px-1 rounded cursor-pointer group"
+          title="Select"
+          className={`${iconBtnBase} ${
+            contentState.tool === "select" ? iconBtnActive : iconBtnInactive
+          }`}
           onClick={() => {
             setContentState((prev) => ({ ...prev, tool: "select" }));
           }}
         >
-          <LuMousePointer className="w-6 h-6 text-gray-500" />
-          <span className="hidden group-hover:absolute group-hover:block top-8">
-            select
-          </span>
+          <LuMousePointer className="w-5 h-5" />
         </button>
       </div>
-      <div className="flex flex-row gap-4">
+
+      <div className="flex items-center gap-2">
         <button
-          className="text-base text-white py-2 px-2 rounded cursor-pointer bg-gray-500 hover:bg-blue-700 "
+          title="Save"
+          className="flex items-center gap-2 text-sm font-semibold text-gray-600 pl-3.5 pr-4 py-2 rounded-full cursor-pointer border border-gray-200 hover:border-purple-300 hover:text-purple-600 transition-all duration-200"
+          onClick={handleSave}
+        >
+          <FaSave className="w-4 h-4" />
+          Save
+        </button>
+        <button
+          title="Export as Image"
+          className="flex items-center gap-2 text-sm font-semibold text-white pl-3.5 pr-4 py-2 rounded-full cursor-pointer bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-400 hover:to-pink-400 shadow-md shadow-purple-500/30 transition-all duration-200"
           onClick={handleExport}
         >
-          Export as Image
+          <FaDownload className="w-4 h-4" />
+          Export
         </button>
-        <div className="flex items-center gap-4">
-          {recording ? (
-            <button
-              className="text-base py-2 px-1 rounded cursor-pointer bg-red-500 hover:bg-red-700 "
-              onClick={stopRecording}
-            >
-              <FaStop className="w-6 h-6" />
-            </button>
-          ) : (
-            <button
-              className="text-base py-2 px-2 rounded-full text-white cursor-pointer bg-green-500 hover:bg-green-700 "
-              onClick={startRecording}
-            >
-              <FaVideo className="w-6 h-6" />
-            </button>
-          )}
-          {videoURL && (
-            <a
-              href={videoURL}
-              download="canvas-recording.webm"
-              className="text-base py-2 px-1 rounded cursor-pointer bg-blue-500 hover:bg-blue-700 "
-            >
-              Download Video
-            </a>
-          )}
-        </div>
+
+        {recording ? (
+          <button
+            title="Stop Recording"
+            className="flex items-center gap-2 text-sm font-semibold text-white pl-3.5 pr-4 py-2 rounded-full cursor-pointer bg-red-500 hover:bg-red-600 shadow-md shadow-red-500/30 transition-all duration-200"
+            onClick={stopRecording}
+          >
+            <FaStop className="w-4 h-4" />
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-white" />
+            </span>
+          </button>
+        ) : (
+          <button
+            title="Start Recording"
+            className={`${iconBtnBase} ${iconBtnInactive} hover:bg-red-50 hover:text-red-500`}
+            onClick={startRecording}
+          >
+            <FaVideo className="w-5 h-5" />
+          </button>
+        )}
+
+        {videoURL && (
+          <a
+            href={videoURL}
+            download="canvas-recording.webm"
+            title="Download Recording"
+            className="flex items-center gap-2 text-sm font-semibold text-white pl-3.5 pr-4 py-2 rounded-full cursor-pointer bg-blue-500 hover:bg-blue-600 shadow-md shadow-blue-500/30 transition-all duration-200"
+          >
+            <FaDownload className="w-4 h-4" />
+            Video
+          </a>
+        )}
       </div>
     </div>
   );
