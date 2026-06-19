@@ -1,4 +1,4 @@
-import { Canvas, Circle, FabricObject, Line } from "fabric";
+import { Canvas, Circle, FabricObject, Line, Point } from "fabric";
 import { useEffect, useRef, useState } from "react";
 import { Shape } from "./Shapes";
 import PenTool from "./PenTool";
@@ -19,6 +19,10 @@ function CanvasWrapper() {
   const cursorCircleRef = useRef<Circle | null>(null);
   const horizontalGuideRef = useRef<Line | null>(null);
   const verticalGuideRef = useRef<Line | null>(null);
+  const canvasBackgroundColorRef = useRef(contentState.canvasBackgroundColor);
+  const isPanModeRef = useRef(false);
+  const isDraggingRef = useRef(false);
+  const lastPosRef = useRef({ x: 0, y: 0 });
   const [toolbarPosition, setToolbarPosition] = useState<{
     top: number;
     left: number;
@@ -39,7 +43,7 @@ function CanvasWrapper() {
     canvas.selectionBorderColor = "blue";
 
     canvas._renderBackground = function (ctx) {
-      ctx.fillStyle = contentState.canvasBackgroundColor;
+      ctx.fillStyle = canvasBackgroundColorRef.current;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       const zoom = this.getZoom();
@@ -100,11 +104,68 @@ function CanvasWrapper() {
 
     // canvas.on("mouse:move", handleMouseMove);
 
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.code === "Space") {
+        isPanModeRef.current = true;
+        canvas.defaultCursor = "grab";
+        canvas.renderAll();
+      }
+      if(e.ctrlKey && e.code ==="KeyH"){
+        isPanModeRef.current=true;
+        canvas.defaultCursor="grab";
+        canvas.renderAll();
+      }
+    };
+
+    const handleKeyUp = (e: KeyboardEvent) => {
+      if (e.code === "Space") {
+        isPanModeRef.current = false;
+        isDraggingRef.current = false;
+        canvas.defaultCursor = "default";
+        canvas.renderAll();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("keyup", handleKeyUp);
+
+    canvas.on("mouse:down", (opt) => {
+      if (isPanModeRef.current) {
+        const e = opt.e as MouseEvent;
+        isDraggingRef.current = true;
+        lastPosRef.current = { x: e.clientX, y: e.clientY };
+        canvas.defaultCursor = "grabbing";
+      }
+    });
+
+    canvas.on("mouse:move", (opt) => {
+      if (!isDraggingRef.current) return;
+      const e = opt.e as MouseEvent;
+      const dx = e.clientX - lastPosRef.current.x;
+      const dy = e.clientY - lastPosRef.current.y;
+      canvas.relativePan(new Point(dx, dy));
+      lastPosRef.current = { x: e.clientX, y: e.clientY };
+    });
+
+    canvas.on("mouse:up", () => {
+      isDraggingRef.current = false;
+      if (isPanModeRef.current) {
+        canvas.defaultCursor = "grab";
+      }
+    });
+
     return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("keyup", handleKeyUp);
       canvas.dispose();
-      // canvas.off("mouse:move", handleMouseMove);
     };
   }, []);
+
+  useEffect(() => {
+    canvasBackgroundColorRef.current = contentState.canvasBackgroundColor;
+    fabricRef.current?.renderAll();
+  }, [contentState.canvasBackgroundColor]);
 
   useEffect(() => {
     if (!fabricRef.current) return;
