@@ -1,4 +1,4 @@
-import { Canvas, Circle, FabricObject, Line, Point } from "fabric";
+import { ActiveSelection, Canvas, Circle, FabricObject, Group, Line, Point } from "fabric";
 import { useEffect, useRef, useState } from "react";
 import { Shape } from "./Shapes";
 import PenTool from "./PenTool";
@@ -7,10 +7,107 @@ import { useContextCanvas } from "../hooks/useContextCanvas";
 import Toolbar from "./Toolbar";
 
 const CELL_SIZE = 30;
+const RULER_SIZE = 24;
 
-// function snapToGrid(point) {
-//   return Math.round(point / CELL_SIZE) * CELL_SIZE;
-// }
+function drawRulers(
+  fabricCanvas: Canvas,
+  hCanvas: HTMLCanvasElement | null,
+  vCanvas: HTMLCanvasElement | null
+) {
+  if (!hCanvas || !vCanvas) return;
+
+  const zoom = fabricCanvas.getZoom();
+  const vpt = fabricCanvas.viewportTransform;
+  const offsetX = vpt[4];
+  const offsetY = vpt[5];
+  const width = fabricCanvas.width;
+  const height = fabricCanvas.height;
+
+  const rawStep = 100 / zoom;
+  const mag = Math.pow(10, Math.floor(Math.log10(rawStep)));
+  const norm = rawStep / mag;
+  const step = norm <= 2 ? 2 * mag : norm <= 5 ? 5 * mag : 10 * mag;
+
+  // Horizontal
+  hCanvas.width = width;
+  hCanvas.height = RULER_SIZE;
+  const hCtx = hCanvas.getContext("2d")!;
+  hCtx.fillStyle = "rgba(249,250,251,0.92)";
+  hCtx.fillRect(0, 0, width, RULER_SIZE);
+  hCtx.strokeStyle = "#9ca3af";
+  hCtx.fillStyle = "#6b7280";
+  hCtx.font = "9px sans-serif";
+  hCtx.textAlign = "center";
+  hCtx.lineWidth = 0.5;
+
+  const startX = Math.floor(-offsetX / (zoom * step)) * step;
+  for (let val = startX; val * zoom + offsetX <= width; val += step) {
+    const x = val * zoom + offsetX;
+    if (x < 0) continue;
+    hCtx.beginPath();
+    hCtx.moveTo(x, RULER_SIZE - 8);
+    hCtx.lineTo(x, RULER_SIZE);
+    hCtx.stroke();
+    hCtx.fillText(String(Math.round(val)), x, RULER_SIZE - 10);
+    const minor = step / 5;
+    for (let m = 1; m < 5; m++) {
+      const mx = (val + m * minor) * zoom + offsetX;
+      if (mx < 0 || mx > width) continue;
+      hCtx.beginPath();
+      hCtx.moveTo(mx, RULER_SIZE - 4);
+      hCtx.lineTo(mx, RULER_SIZE);
+      hCtx.stroke();
+    }
+  }
+  hCtx.strokeStyle = "#d1d5db";
+  hCtx.lineWidth = 1;
+  hCtx.beginPath();
+  hCtx.moveTo(0, RULER_SIZE - 0.5);
+  hCtx.lineTo(width, RULER_SIZE - 0.5);
+  hCtx.stroke();
+
+  // Vertical
+  vCanvas.width = RULER_SIZE;
+  vCanvas.height = height;
+  const vCtx = vCanvas.getContext("2d")!;
+  vCtx.fillStyle = "rgba(249,250,251,0.92)";
+  vCtx.fillRect(0, 0, RULER_SIZE, height);
+  vCtx.strokeStyle = "#9ca3af";
+  vCtx.fillStyle = "#6b7280";
+  vCtx.font = "9px sans-serif";
+  vCtx.textAlign = "center";
+  vCtx.lineWidth = 0.5;
+
+  const startY = Math.floor(-offsetY / (zoom * step)) * step;
+  for (let val = startY; val * zoom + offsetY <= height; val += step) {
+    const y = val * zoom + offsetY;
+    if (y < 0) continue;
+    vCtx.beginPath();
+    vCtx.moveTo(RULER_SIZE - 8, y);
+    vCtx.lineTo(RULER_SIZE, y);
+    vCtx.stroke();
+    vCtx.save();
+    vCtx.translate(RULER_SIZE - 10, y);
+    vCtx.rotate(-Math.PI / 2);
+    vCtx.fillText(String(Math.round(val)), 0, 0);
+    vCtx.restore();
+    const minor = step / 5;
+    for (let m = 1; m < 5; m++) {
+      const my = (val + m * minor) * zoom + offsetY;
+      if (my < 0 || my > height) continue;
+      vCtx.beginPath();
+      vCtx.moveTo(RULER_SIZE - 4, my);
+      vCtx.lineTo(RULER_SIZE, my);
+      vCtx.stroke();
+    }
+  }
+  vCtx.strokeStyle = "#d1d5db";
+  vCtx.lineWidth = 1;
+  vCtx.beginPath();
+  vCtx.moveTo(RULER_SIZE - 0.5, 0);
+  vCtx.lineTo(RULER_SIZE - 0.5, height);
+  vCtx.stroke();
+}
 
 function CanvasWrapper() {
   const { contentState, setContentState } = useContextCanvas();
@@ -20,6 +117,10 @@ function CanvasWrapper() {
   const horizontalGuideRef = useRef<Line | null>(null);
   const verticalGuideRef = useRef<Line | null>(null);
   const canvasBackgroundColorRef = useRef(contentState.canvasBackgroundColor);
+  const showBackgroundGridRef=useRef(contentState.showBackgroundGrid);
+  const clipboardRef = useRef<FabricObject | null>(null);
+  const hRulerRef = useRef<HTMLCanvasElement | null>(null);
+  const vRulerRef = useRef<HTMLCanvasElement | null>(null);
   const isPanModeRef = useRef(false);
   const isDraggingRef = useRef(false);
   const lastPosRef = useRef({ x: 0, y: 0 });
@@ -43,17 +144,19 @@ function CanvasWrapper() {
     canvas.selectionBorderColor = "blue";
 
     canvas._renderBackground = function (ctx) {
+
+      
       ctx.fillStyle = canvasBackgroundColorRef.current;
+      if(!showBackgroundGridRef.current) return
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      const zoom = this.getZoom();
       const offsetX = this.viewportTransform[4];
       const offsetY = this.viewportTransform[5];
 
       ctx.strokeStyle = "#e6fbff";
       ctx.lineWidth = 1;
 
-      const gridSize = CELL_SIZE * zoom;
+      const gridSize = CELL_SIZE;
 
       const numCellsX = Math.ceil(canvas.width / gridSize);
       const numCellsY = Math.ceil(canvas.height / gridSize);
@@ -111,10 +214,109 @@ function CanvasWrapper() {
         canvas.defaultCursor = "grab";
         canvas.renderAll();
       }
-      if(e.ctrlKey && e.code ==="KeyH"){
-        isPanModeRef.current=true;
-        canvas.defaultCursor="grab";
+      if (e.ctrlKey && e.code === "KeyH") {
+        isPanModeRef.current = true;
+        canvas.defaultCursor = "grab";
         canvas.renderAll();
+      }
+
+      if (e.code === "Delete" || e.code === "Backspace") {
+        const target = e.target as HTMLElement;
+        if (target.tagName === "INPUT" || target.tagName === "TEXTAREA") return;
+        const activeObject = canvas.getActiveObject();
+        if (activeObject && !(activeObject as any).isEditing) {
+          canvas.remove(activeObject);
+          canvas.discardActiveObject();
+          canvas.renderAll();
+        }
+      }
+
+      if (e.ctrlKey && e.code === "KeyD") {
+        e.preventDefault();
+        const activeObject = canvas.getActiveObject();
+        if (activeObject) {
+          activeObject.clone().then((cloned: FabricObject) => {
+            cloned.set({
+              left: (activeObject.left || 0) + 10,
+              top: (activeObject.top || 0) + 10,
+              evented: true,
+            });
+            canvas.add(cloned);
+            canvas.setActiveObject(cloned);
+            canvas.requestRenderAll();
+          });
+        }
+      }
+
+      if (e.ctrlKey && !e.shiftKey && e.code === "KeyG") {
+        e.preventDefault();
+        const activeObject = canvas.getActiveObject();
+        if (activeObject instanceof ActiveSelection) {
+          const objects = activeObject.getObjects();
+          canvas.discardActiveObject();
+          objects.forEach((obj) => canvas.remove(obj));
+          const group = new Group(objects);
+          canvas.add(group);
+          canvas.setActiveObject(group);
+          canvas.requestRenderAll();
+        }
+      }
+
+      if (e.ctrlKey && e.shiftKey && e.code === "KeyG") {
+        e.preventDefault();
+        const activeObject = canvas.getActiveObject();
+        if (activeObject instanceof Group && !(activeObject instanceof ActiveSelection)) {
+          const objects = activeObject.removeAll();
+          canvas.remove(activeObject);
+          objects.forEach((obj) => canvas.add(obj));
+          canvas.requestRenderAll();
+        }
+      }
+
+      if (e.ctrlKey && e.code === "KeyC") {
+        const target = e.target as HTMLElement;
+        if (target.tagName === "INPUT" || target.tagName === "TEXTAREA") return;
+        const activeObject = canvas.getActiveObject();
+        if (activeObject && !(activeObject as any).isEditing) {
+          activeObject.clone().then((cloned: FabricObject) => {
+            clipboardRef.current = cloned;
+          });
+        }
+      }
+
+      if (e.ctrlKey && e.code === "KeyX") {
+        const target = e.target as HTMLElement;
+        if (target.tagName === "INPUT" || target.tagName === "TEXTAREA") return;
+        const activeObject = canvas.getActiveObject();
+        if (activeObject && !(activeObject as any).isEditing) {
+          activeObject.clone().then((cloned: FabricObject) => {
+            clipboardRef.current = cloned;
+            canvas.remove(activeObject);
+            canvas.discardActiveObject();
+            canvas.requestRenderAll();
+          });
+        }
+      }
+
+      if (e.ctrlKey && e.code === "KeyV") {
+        const target = e.target as HTMLElement;
+        if (target.tagName === "INPUT" || target.tagName === "TEXTAREA") return;
+        if (clipboardRef.current) {
+          clipboardRef.current.clone().then((cloned: FabricObject) => {
+            cloned.set({
+              left: (cloned.left || 0) + 20,
+              top: (cloned.top || 0) + 20,
+              evented: true,
+            });
+            canvas.add(cloned);
+            canvas.setActiveObject(cloned);
+            canvas.requestRenderAll();
+            clipboardRef.current!.set({
+              left: (clipboardRef.current!.left || 0) + 20,
+              top: (clipboardRef.current!.top || 0) + 20,
+            });
+          });
+        }
       }
     };
 
@@ -155,6 +357,21 @@ function CanvasWrapper() {
       }
     });
 
+    canvas.on("object:moving", (e) => {
+      if (!showBackgroundGridRef.current) return;
+      const obj = e.target;
+      if (obj) {
+        obj.set({
+          left: Math.round((obj.left || 0) / CELL_SIZE) * CELL_SIZE,
+          top: Math.round((obj.top || 0) / CELL_SIZE) * CELL_SIZE,
+        });
+      }
+    });
+
+    canvas.on("after:render", () => {
+      drawRulers(canvas, hRulerRef.current, vRulerRef.current);
+    });
+
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("keyup", handleKeyUp);
@@ -166,6 +383,12 @@ function CanvasWrapper() {
     canvasBackgroundColorRef.current = contentState.canvasBackgroundColor;
     fabricRef.current?.renderAll();
   }, [contentState.canvasBackgroundColor]);
+
+  useEffect(()=>{
+    console.log("showBG:",contentState.showBackgroundGrid)
+    showBackgroundGridRef.current=contentState.showBackgroundGrid
+    fabricRef.current?.renderAll();
+  },[contentState.showBackgroundGrid])
 
   useEffect(() => {
     if (!fabricRef.current) return;
@@ -351,6 +574,17 @@ function CanvasWrapper() {
   return (
     <div className="relative">
       <canvas ref={canvasRef} id="canvas" className="border border-amber-300" />
+      <div className="absolute top-0 left-0 w-6 h-6 bg-gray-50/95 border-r border-b border-gray-300 z-20 pointer-events-none" />
+      <canvas
+        ref={hRulerRef}
+        className="absolute top-0 left-6 z-10 pointer-events-none"
+        height={RULER_SIZE}
+      />
+      <canvas
+        ref={vRulerRef}
+        className="absolute top-6 left-0 z-10 pointer-events-none"
+        width={RULER_SIZE}
+      />
       {toolbarPosition && (
         <Toolbar
           top={toolbarPosition.top}

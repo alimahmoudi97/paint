@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { FaCircle, FaSquare, FaTextHeight } from "react-icons/fa";
+import { FaArrowRight, FaCircle, FaSquare, FaTextHeight } from "react-icons/fa";
 import { FiTriangle } from "react-icons/fi";
 import { RiApps2AddLine } from "react-icons/ri";
 import { FaPencil } from "react-icons/fa6";
@@ -20,6 +20,7 @@ const shapeOptions: { id: string; label: string; icon: IconType }[] = [
   { id: "line", label: "Line", icon: TbLine },
   { id: "ellipse", label: "Ellipse", icon: IoEllipse },
   { id: "polygon", label: "Polygon", icon: BiPolygon },
+  { id: "arrow", label: "Arrow", icon: FaArrowRight },
 ];
 
 const navItemBase =

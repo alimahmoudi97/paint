@@ -101,6 +101,24 @@ export const Shape = ({ canvas, contentState, setContentState }: BaseProps) => {
           }
         );
         break;
+      case "arrow":
+        shape = new Polygon(
+          [
+            { x, y },
+            { x, y },
+            { x, y },
+            { x, y },
+            { x, y },
+            { x, y },
+            { x, y },
+          ],
+          {
+            fill: contentState.strokeColor,
+            stroke: contentState.strokeColor,
+            strokeWidth: 1,
+          }
+        );
+        break;
       default:
         return;
     }
@@ -156,6 +174,33 @@ export const Shape = ({ canvas, contentState, setContentState }: BaseProps) => {
         shape.set({ points });
         break;
       }
+      case "arrow": {
+        const dx = currentX - originX;
+        const dy = currentY - originY;
+        const angle = Math.atan2(dy, dx);
+        const len = Math.sqrt(dx * dx + dy * dy);
+        const headLen = Math.min(20, len * 0.3);
+        const headWidth = 12;
+        const shaftWidth = 4;
+        const cos = Math.cos(angle);
+        const sin = Math.sin(angle);
+        const perpX = -sin;
+        const perpY = cos;
+        const baseX = currentX - headLen * cos;
+        const baseY = currentY - headLen * sin;
+
+        const arrowPoints = [
+          { x: originX + perpX * shaftWidth, y: originY + perpY * shaftWidth },
+          { x: baseX + perpX * shaftWidth, y: baseY + perpY * shaftWidth },
+          { x: baseX + perpX * headWidth, y: baseY + perpY * headWidth },
+          { x: currentX, y: currentY },
+          { x: baseX - perpX * headWidth, y: baseY - perpY * headWidth },
+          { x: baseX - perpX * shaftWidth, y: baseY - perpY * shaftWidth },
+          { x: originX - perpX * shaftWidth, y: originY - perpY * shaftWidth },
+        ];
+        shape.set({ points: arrowPoints });
+        break;
+      }
     }
     canvas.renderAll();
   };
@@ -175,8 +220,8 @@ export const Shape = ({ canvas, contentState, setContentState }: BaseProps) => {
   return {
     removeEventListener: function () {
       canvas.off("mouse:down", onMouseDown);
-      canvas.on("mouse:move", onMouseMove);
-      canvas.on("mouse:up", onMouseUp);
+      canvas.off("mouse:move", onMouseMove);
+      canvas.off("mouse:up", onMouseUp);
     },
   };
 };

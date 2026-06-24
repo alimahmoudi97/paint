@@ -25,8 +25,7 @@ function ContextProvider({ children }: { children: ReactNode }) {
     fontColor: "#000000",
     fontFamily: "Arial",
     canvasBackgroundColor: "white",
-    isPanMode:false,
-    isDragging:false,
+    showBackgroundGrid:true,
   });
   const contentStateRef = useRef<ContentState | null>(null);
 

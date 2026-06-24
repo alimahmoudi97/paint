@@ -5,6 +5,7 @@ import ObjectSetting from "./ObjectSetting";
 import TypographySetting from "./TypographySetting";
 import PenToolSetting from "./PenToolSetting";
 import CanvasSetting from "./CanvasSetting";
+import ImageFilterSetting from "./ImageFilterSetting";
 
 function Setting() {
   const { contentState } = useContextCanvas();
@@ -67,6 +68,7 @@ function Setting() {
             ) : (
               <>
                 <ObjectSetting />
+                <ImageFilterSetting />
                 <Layers />
               </>
             )}

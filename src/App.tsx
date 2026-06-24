@@ -16,7 +16,7 @@ function App() {
 
   return (
     <ContextProvider>
-      <div className="flex h-screen">
+      <div className="flex h-dvh">
         <div>
           <Menu />
         </div>

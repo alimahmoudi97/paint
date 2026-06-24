@@ -1,4 +1,4 @@
-import { FaArrowDown, FaArrowUp, FaGripVertical } from "react-icons/fa";
+import { FaArrowDown, FaArrowUp, FaEye, FaEyeSlash, FaGripVertical, FaLock, FaLockOpen } from "react-icons/fa";
 import { useContextCanvas } from "../hooks/useContextCanvas";
 import { useState } from "react";
 import { IconButton, SettingCard } from "./SettingControls";
@@ -6,6 +6,30 @@ import { IconButton, SettingCard } from "./SettingControls";
 function Layers() {
   const { contentState } = useContextCanvas();
   const [selectedLayerItem, setSelectedLayerItem] = useState<number>(-1);
+  const [, forceUpdate] = useState(0);
+
+  const toggleVisibility = (index: number, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const canvas = contentState.canvas;
+    if (!canvas) return;
+    const obj = canvas.item(index);
+    obj.set({ visible: !obj.visible });
+    canvas.discardActiveObject();
+    canvas.renderAll();
+    forceUpdate((n) => n + 1);
+  };
+
+  const toggleLock = (index: number, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const canvas = contentState.canvas;
+    if (!canvas) return;
+    const obj = canvas.item(index);
+    const isLocked = !obj.selectable;
+    obj.set({ selectable: isLocked, evented: isLocked });
+    if (!isLocked) canvas.discardActiveObject();
+    canvas.renderAll();
+    forceUpdate((n) => n + 1);
+  };
 
   const handleLayerClick = (index: number) => {
     const canvas = contentState.canvas;
@@ -107,9 +131,23 @@ function Layers() {
                 }`}
               >
                 <FaGripVertical className="w-3 h-3 text-gray-300 shrink-0" />
-                <span className="capitalize truncate">
+                <span className="capitalize truncate flex-1">
                   {obj.type} {index}
                 </span>
+                <button
+                  title={obj.visible === false ? "Show" : "Hide"}
+                  className={`p-0.5 rounded transition-colors ${obj.visible === false ? "text-gray-300" : "text-gray-400 hover:text-purple-500"}`}
+                  onClick={(e) => toggleVisibility(index, e)}
+                >
+                  {obj.visible === false ? <FaEyeSlash className="w-3 h-3" /> : <FaEye className="w-3 h-3" />}
+                </button>
+                <button
+                  title={obj.selectable === false ? "Unlock" : "Lock"}
+                  className={`p-0.5 rounded transition-colors ${obj.selectable === false ? "text-red-400" : "text-gray-400 hover:text-purple-500"}`}
+                  onClick={(e) => toggleLock(index, e)}
+                >
+                  {obj.selectable === false ? <FaLock className="w-3 h-3" /> : <FaLockOpen className="w-3 h-3" />}
+                </button>
               </div>
             ))}
           </div>

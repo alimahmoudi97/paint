@@ -1,5 +1,5 @@
 import { useContextCanvas } from "../hooks/useContextCanvas";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   FaDownload,
   FaExpand,
@@ -11,7 +11,7 @@ import {
 } from "react-icons/fa";
 import useCanvasRecorder from "../hooks/useCanvasRecorder";
 import { IoIosRedo, IoIosUndo } from "react-icons/io";
-import { TbZoomReset } from "react-icons/tb";
+import { TbZoomReset, TbGrid3X3 } from "react-icons/tb";
 import { LuMousePointer } from "react-icons/lu";
 
 function Header() {
@@ -20,6 +20,7 @@ function Header() {
     useCanvasRecorder();
 
   const isUndoingRef = useRef(false);
+  const [showExportMenu, setShowExportMenu] = useState(false);
 
   const saveState = () => {
     if (isUndoingRef.current) return;
@@ -149,19 +150,38 @@ function Header() {
     canvas.renderAll();
   };
 
-  const handleExport = () => {
-    if (contentState.canvas) {
+  const handleExport = (format: "png" | "jpeg" | "svg") => {
+    if (!contentState.canvas) return;
+
+    if (format === "svg") {
+      const svg = contentState.canvas.toSVG();
+      const blob = new Blob([svg], { type: "image/svg+xml" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "canvas.svg";
+      link.click();
+      URL.revokeObjectURL(url);
+    } else {
       const dataURL = contentState.canvas.toDataURL({
-        format: "png",
+        format,
         quality: 1.0,
         multiplier: 1,
       });
       const link = document.createElement("a");
       link.href = dataURL;
-      link.download = "canvas.png";
+      link.download = `canvas.${format === "jpeg" ? "jpg" : format}`;
       link.click();
     }
+    setShowExportMenu(false);
   };
+
+  const handleShowBackgroundGrid=()=>{
+    setContentState((p)=>({
+      ...p,
+      showBackgroundGrid:!p.showBackgroundGrid
+    }));
+  }
 
   const handleSave = () => {
     const canvas = contentState.canvas;
@@ -177,6 +197,36 @@ function Header() {
     canvas.clear();
     canvas.loadFromJSON(JSON.parse(saved)).then(() => canvas.renderAll());
   };
+
+  const undoFnRef = useRef(undo);
+  const redoFnRef = useRef(redo);
+  const saveFnRef = useRef(handleSave);
+  undoFnRef.current = undo;
+  redoFnRef.current = redo;
+  saveFnRef.current = handleSave;
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.code === "KeyZ" && !e.shiftKey) {
+        e.preventDefault();
+        undoFnRef.current();
+      }
+      if (e.ctrlKey && e.code === "KeyY") {
+        e.preventDefault();
+        redoFnRef.current();
+      }
+      if (e.ctrlKey && e.shiftKey && e.code === "KeyZ") {
+        e.preventDefault();
+        redoFnRef.current();
+      }
+      if (e.ctrlKey && e.code === "KeyS") {
+        e.preventDefault();
+        saveFnRef.current();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   useEffect(() => {
     const canvas = contentState.canvas;
@@ -240,6 +290,17 @@ function Header() {
         >
           <LuMousePointer className="w-5 h-5" />
         </button>
+        <button
+          title="Toggle Grid"
+          className={`${iconBtnBase} transition-opacity duration-200 ${
+            contentState.showBackgroundGrid
+              ? iconBtnInactive
+              : "text-gray-300 hover:bg-gray-100"
+          }`}
+          onClick={handleShowBackgroundGrid}
+        >
+          <TbGrid3X3 className="w-5 h-5" />
+        </button>
       </div>
 
       <div className="flex items-center gap-2">
@@ -251,14 +312,35 @@ function Header() {
           <FaSave className="w-4 h-4" />
           Save
         </button>
-        <button
-          title="Export as Image"
-          className="flex items-center gap-2 text-sm font-semibold text-white pl-3.5 pr-4 py-2 rounded-full cursor-pointer bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-400 hover:to-pink-400 shadow-md shadow-purple-500/30 transition-all duration-200"
-          onClick={handleExport}
-        >
-          <FaDownload className="w-4 h-4" />
-          Export
-        </button>
+        <div className="relative">
+          <button
+            title="Export as Image"
+            className="flex items-center gap-2 text-sm font-semibold text-white pl-3.5 pr-4 py-2 rounded-full cursor-pointer bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-400 hover:to-pink-400 shadow-md shadow-purple-500/30 transition-all duration-200"
+            onClick={() => setShowExportMenu(!showExportMenu)}
+          >
+            <FaDownload className="w-4 h-4" />
+            Export
+          </button>
+          {showExportMenu && (
+            <>
+              <div
+                className="fixed inset-0 z-40"
+                onClick={() => setShowExportMenu(false)}
+              />
+              <div className="absolute top-full right-0 mt-2 bg-white rounded-xl shadow-lg border border-gray-100 py-1 min-w-[140px] z-50">
+                {(["png", "jpeg", "svg"] as const).map((format) => (
+                  <button
+                    key={format}
+                    className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-600 transition-colors cursor-pointer"
+                    onClick={() => handleExport(format)}
+                  >
+                    {format.toUpperCase()}
+                  </button>
+                ))}
+              </div>
+            </>
+          )}
+        </div>
 
         {recording ? (
           <button

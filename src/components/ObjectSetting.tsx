@@ -6,8 +6,11 @@ import {
   BsAlignStart,
   BsAlignTop,
 } from "react-icons/bs";
+import { TbLayoutDistributeHorizontal, TbLayoutDistributeVertical } from "react-icons/tb";
 import { LuMousePointerClick } from "react-icons/lu";
+import { Gradient } from "fabric";
 import { useContextCanvas } from "../hooks/useContextCanvas";
+import { useState } from "react";
 import {
   ColorField,
   IconButton,
@@ -98,6 +101,75 @@ function ObjectSetting() {
     }
   };
 
+  const [fillMode, setFillMode] = useState<"solid" | "gradient">("solid");
+  const [gradColor1, setGradColor1] = useState("#ff0000");
+  const [gradColor2, setGradColor2] = useState("#0000ff");
+  const [gradAngle, setGradAngle] = useState(0);
+
+  const applyGradient = (c1: string, c2: string, angle: number) => {
+    const canvas = contentState.canvas;
+    if (!canvas) return;
+    const obj = canvas.getActiveObject();
+    if (!obj) return;
+
+    const rad = (angle * Math.PI) / 180;
+    const gradient = new Gradient({
+      type: "linear",
+      gradientUnits: "percentage",
+      coords: {
+        x1: 0.5 - Math.cos(rad) * 0.5,
+        y1: 0.5 - Math.sin(rad) * 0.5,
+        x2: 0.5 + Math.cos(rad) * 0.5,
+        y2: 0.5 + Math.sin(rad) * 0.5,
+      },
+      colorStops: [
+        { offset: 0, color: c1 },
+        { offset: 1, color: c2 },
+      ],
+    });
+    obj.set("fill", gradient);
+    canvas.renderAll();
+    setContentState((prev) => ({ ...prev, selectedObject: obj }));
+  };
+
+  const distributeHorizontally = () => {
+    const canvas = contentState.canvas;
+    if (!canvas) return;
+    const active = canvas.getActiveObject();
+    if (!active || !(active as any).getObjects) return;
+    const objects = [...(active as any).getObjects()].sort(
+      (a: any, b: any) => a.left - b.left
+    );
+    if (objects.length < 3) return;
+    const minLeft = objects[0].left;
+    const maxLeft = objects[objects.length - 1].left;
+    const spacing = (maxLeft - minLeft) / (objects.length - 1);
+    objects.forEach((obj: any, i: number) => {
+      obj.set({ left: minLeft + spacing * i });
+      obj.setCoords();
+    });
+    canvas.renderAll();
+  };
+
+  const distributeVertically = () => {
+    const canvas = contentState.canvas;
+    if (!canvas) return;
+    const active = canvas.getActiveObject();
+    if (!active || !(active as any).getObjects) return;
+    const objects = [...(active as any).getObjects()].sort(
+      (a: any, b: any) => a.top - b.top
+    );
+    if (objects.length < 3) return;
+    const minTop = objects[0].top;
+    const maxTop = objects[objects.length - 1].top;
+    const spacing = (maxTop - minTop) / (objects.length - 1);
+    objects.forEach((obj: any, i: number) => {
+      obj.set({ top: minTop + spacing * i });
+      obj.setCoords();
+    });
+    canvas.renderAll();
+  };
+
   const selectedObject = contentState.selectedObject;
 
   if (!selectedObject) {
@@ -133,20 +205,17 @@ function ObjectSetting() {
         </div>
       </SettingCard>
 
-      <SettingCard title="Fill">
-        <div className="flex items-center justify-between mb-3">
-          <span className="text-sm text-gray-600">Enable fill</span>
-          <ToggleSwitch
-            checked={!!contentState.fillShape}
-            onChange={(checked) =>
-              setContentState((prev) => ({ ...prev, fillShape: checked }))
+      <SettingCard title="Opacity">
+        <div className="flex items-center gap-3">
+          <input
+            type="range"
+            min={0}
+            max={100}
+            value={opacityPercent}
+            onChange={(e) =>
+              handlePropertyChange("opacity", parseInt(e.target.value) / 100)
             }
-          />
-        </div>
-        <div className="flex items-center gap-2">
-          <ColorField
-            value={fillColor}
-            onChange={(value) => handlePropertyChange("fill", value)}
+            className="flex-1 h-1.5 accent-purple-500 cursor-pointer"
           />
           <NumberField
             className="w-16"
@@ -159,6 +228,93 @@ function ObjectSetting() {
             }
           />
         </div>
+      </SettingCard>
+
+      <SettingCard title="Fill">
+        <div className="flex items-center justify-between mb-3">
+          <span className="text-sm text-gray-600">Enable fill</span>
+          <ToggleSwitch
+            checked={!!contentState.fillShape}
+            onChange={(checked) =>
+              setContentState((prev) => ({ ...prev, fillShape: checked }))
+            }
+          />
+        </div>
+        <div className="flex bg-gray-100 rounded-lg p-0.5 mb-3">
+          <button
+            className={`flex-1 text-xs font-medium py-1.5 rounded-md cursor-pointer transition-all ${
+              fillMode === "solid"
+                ? "bg-white text-purple-600 shadow-sm"
+                : "text-gray-500"
+            }`}
+            onClick={() => {
+              setFillMode("solid");
+              handlePropertyChange("fill", gradColor1);
+            }}
+          >
+            Solid
+          </button>
+          <button
+            className={`flex-1 text-xs font-medium py-1.5 rounded-md cursor-pointer transition-all ${
+              fillMode === "gradient"
+                ? "bg-white text-purple-600 shadow-sm"
+                : "text-gray-500"
+            }`}
+            onClick={() => {
+              setFillMode("gradient");
+              applyGradient(gradColor1, gradColor2, gradAngle);
+            }}
+          >
+            Gradient
+          </button>
+        </div>
+        {fillMode === "solid" ? (
+          <ColorField
+            value={fillColor}
+            onChange={(value) => handlePropertyChange("fill", value)}
+          />
+        ) : (
+          <div className="flex flex-col gap-2.5">
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] text-gray-400 w-8">Start</span>
+              <ColorField
+                value={gradColor1}
+                onChange={(v) => {
+                  setGradColor1(v);
+                  applyGradient(v, gradColor2, gradAngle);
+                }}
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] text-gray-400 w-8">End</span>
+              <ColorField
+                value={gradColor2}
+                onChange={(v) => {
+                  setGradColor2(v);
+                  applyGradient(gradColor1, v, gradAngle);
+                }}
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] text-gray-400 w-8">Angle</span>
+              <input
+                type="range"
+                min={0}
+                max={360}
+                value={gradAngle}
+                onChange={(e) => {
+                  const a = parseInt(e.target.value);
+                  setGradAngle(a);
+                  applyGradient(gradColor1, gradColor2, a);
+                }}
+                className="flex-1 h-1.5 accent-purple-500 cursor-pointer"
+              />
+              <span className="text-xs text-gray-500 w-8 text-right font-mono">
+                {gradAngle}°
+              </span>
+            </div>
+          </div>
+        )}
       </SettingCard>
 
       <SettingCard title="Stroke">
@@ -204,6 +360,17 @@ function ObjectSetting() {
               </IconButton>
               <IconButton title="Right" onClick={() => alignObject("horizontal-end")}>
                 <BsAlignEnd />
+              </IconButton>
+            </div>
+          </div>
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-gray-500">Distribute</span>
+            <div className="flex gap-1.5">
+              <IconButton title="Distribute Horizontally" onClick={distributeHorizontally}>
+                <TbLayoutDistributeHorizontal />
+              </IconButton>
+              <IconButton title="Distribute Vertically" onClick={distributeVertically}>
+                <TbLayoutDistributeVertical />
               </IconButton>
             </div>
           </div>
